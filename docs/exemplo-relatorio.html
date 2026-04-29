@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Análise Revisional — CCB nº 14-3381541/25</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,700;9..144,900&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FAF7F2;
+    --bg-alt: #F2EDE4;
+    --bg-card: #FFFFFF;
+    --ink: #1A1F2E;
+    --ink-soft: #4A5468;
+    --ink-faint: #8A95A8;
+    --rule: #D8CFBF;
+    --rule-soft: #E8E2D5;
+    --abuse: #8B2635;
+    --abuse-bg: #FBEFEE;
+    --fair: #2C5530;
+    --fair-bg: #EEF3EE;
+    --gold: #9C7B3F;
+    --warn: #A8541C;
+    --warn-bg: #FBF1E5;
+    --neutral: #3B5174;
+    --neutral-bg: #ECF0F6;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { font-size: 16px; }
+
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-feature-settings: "kern", "liga";
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.65;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 60px 56px 80px;
+    background: var(--bg);
+  }
+
+  /* ============ TIPOGRAFIA ============ */
+  h1, h2, h3, h4 {
+    font-family: 'Fraunces', 'Times New Roman', serif;
+    font-weight: 500;
+    line-height: 1.15;
+    color: var(--ink);
+    font-feature-settings: "kern", "liga", "ss01";
+  }
+
+  .num, .tabular {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-feature-settings: "tnum";
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ============ CABEÇALHO EDITORIAL ============ */
+  .hero {
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 28px;
+    margin-bottom: 48px;
+  }
+
+  .hero .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--ink-soft);
+    margin-bottom: 16px;
+  }
+
+  .hero h1 {
+    font-size: clamp(2.4rem, 5vw, 3.6rem);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+    margin-bottom: 14px;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--abuse);
+    font-weight: 400;
+  }
+
+  .hero .sub {
+    font-size: 1.05rem;
+    color: var(--ink-soft);
+    font-style: italic;
+    max-width: 600px;
+  }
+
+  .meta-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin-top: 28px;
+    border-top: 1px solid var(--rule);
+    padding-top: 18px;
+  }
+
+  .meta-strip > div {
+    border-right: 1px solid var(--rule);
+    padding: 0 14px;
+  }
+  .meta-strip > div:first-child { padding-left: 0; }
+  .meta-strip > div:last-child { border-right: none; padding-right: 0; }
+
+  .meta-strip .k {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--ink-faint);
+    margin-bottom: 4px;
+  }
+  .meta-strip .v {
+    font-family: 'Fraunces', serif;
+    font-size: 0.92rem;
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  /* ============ MANCHETE / CALL-OUT ============ */
+  .manchete {
+    background: var(--ink);
+    color: var(--bg);
+    padding: 38px 42px;
+    margin: 40px 0 48px;
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .manchete::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--abuse);
+  }
+
+  .manchete .marcador {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: rgba(250, 247, 242, 0.6);
+    margin-bottom: 14px;
+  }
+
+  .manchete h2 {
+    font-size: 1.4rem;
+    color: var(--bg);
+    font-weight: 400;
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+
+  .manchete .valor-grande {
+    font-family: 'Fraunces', serif;
+    font-size: 4.4rem;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    color: var(--bg);
+    margin: 18px 0 12px;
+    font-feature-settings: "tnum";
+  }
+  .manchete .valor-grande .moeda {
+    font-size: 1.8rem;
+    font-weight: 400;
+    color: rgba(250, 247, 242, 0.6);
+    margin-right: 8px;
+    vertical-align: top;
+    line-height: 2;
+  }
+
+  .manchete .legenda {
+    font-size: 0.95rem;
+    color: rgba(250, 247, 242, 0.85);
+    font-style: italic;
+    max-width: 580px;
+  }
+
+  /* ============ SEÇÕES ============ */
+  section {
+    margin-bottom: 56px;
+  }
+
+  .secao-numero {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+
+  h2.secao {
+    font-size: 1.95rem;
+    font-weight: 500;
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+
+  h2.secao + .descricao {
+    color: var(--ink-soft);
+    font-style: italic;
+    margin-bottom: 28px;
+    font-size: 1.02rem;
+  }
+
+  h3 {
+    font-size: 1.25rem;
+    font-weight: 500;
+    margin-top: 28px;
+    margin-bottom: 12px;
+  }
+
+  p { margin-bottom: 14px; }
+
+  /* ============ GLOSSÁRIO / CARDS ============ */
+  .glossario {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-bottom: 24px;
+  }
+
+  .verbete {
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    padding: 22px 24px;
+    border-radius: 2px;
+  }
+
+  .verbete .termo {
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 1.1rem;
+    color: var(--ink);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .verbete .termo .ref {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 400;
+  }
+
+  .verbete p { font-size: 0.92rem; color: var(--ink-soft); margin-bottom: 8px; }
+  .verbete .analogia {
+    font-style: italic;
+    font-size: 0.88rem;
+    color: var(--ink);
+    border-left: 2px solid var(--gold);
+    padding-left: 12px;
+    margin-top: 10px;
+  }
+
+  /* ============ COMPARAÇÃO / VS ============ */
+  .vs-block {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 0;
+    align-items: stretch;
+    margin: 28px 0 8px;
+    border: 1px solid var(--rule);
+    background: var(--bg-card);
+  }
+
+  .vs-col {
+    padding: 28px 30px;
+  }
+
+  .vs-col.atual {
+    background: var(--abuse-bg);
+    border-right: 1px solid var(--rule);
+  }
+
+  .vs-col.justo {
+    background: var(--fair-bg);
+    border-left: 1px solid var(--rule);
+  }
+
+  .vs-col .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    margin-bottom: 8px;
+  }
+  .vs-col.atual .tag { color: var(--abuse); }
+  .vs-col.justo .tag { color: var(--fair); }
+
+  .vs-col h4 {
+    font-size: 1.05rem;
+    margin-bottom: 18px;
+    font-weight: 500;
+  }
+  .vs-col.atual h4 { color: var(--abuse); }
+  .vs-col.justo h4 { color: var(--fair); }
+
+  .vs-col .item {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--rule);
+    font-size: 0.95rem;
+  }
+  .vs-col .item:last-child { border-bottom: none; }
+  .vs-col .item .lbl { color: var(--ink-soft); }
+  .vs-col .item .val { font-family: 'JetBrains Mono', monospace; font-weight: 500; }
+
+  .vs-divisor {
+    background: var(--ink);
+    color: var(--bg);
+    width: 64px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fraunces', serif;
+    font-size: 1.3rem;
+    font-style: italic;
+    font-weight: 400;
+  }
+
+  /* ============ TESTE 1,5x ============ */
+  .teste-stj {
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    padding: 32px 36px;
+    margin: 28px 0;
+  }
+  .teste-stj .formula {
+    text-align: center;
+    font-family: 'Fraunces', serif;
+    font-size: 1.4rem;
+    margin: 24px 0;
+    color: var(--ink);
+  }
+  .teste-stj .formula .num { font-family: 'JetBrains Mono', monospace; }
+  .teste-stj .formula .op { color: var(--ink-faint); margin: 0 8px; font-style: italic; }
+  .teste-stj .formula .resultado {
+    color: var(--abuse);
+    font-weight: 700;
+    font-style: italic;
+  }
+
+  .barra-comparativa {
+    margin: 28px 0;
+  }
+  .barra-comparativa .bar-row {
+    display: grid;
+    grid-template-columns: 220px 1fr 100px;
+    gap: 14px;
+    align-items: center;
+    margin-bottom: 14px;
+    font-size: 0.9rem;
+  }
+  .barra-comparativa .bar-label {
+    color: var(--ink-soft);
+  }
+  .barra-comparativa .bar-track {
+    background: var(--rule-soft);
+    height: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .barra-comparativa .bar-fill {
+    height: 100%;
+    transition: width 0.6s ease;
+  }
+  .barra-comparativa .bar-fill.bacen { background: var(--fair); width: 40%; }
+  .barra-comparativa .bar-fill.limite { background: var(--warn); width: 60%; }
+  .barra-comparativa .bar-fill.contratada { background: var(--abuse); width: 65.4%; }
+  .barra-comparativa .bar-fill.cet { background: var(--abuse); width: 83%; opacity: 0.85; }
+
+  .barra-comparativa .bar-track::after {
+    content: "limite STJ →";
+    position: absolute;
+    left: 60%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--ink);
+    background: var(--bg);
+    padding: 0 6px;
+    white-space: nowrap;
+    border-left: 2px dashed var(--warn);
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+
+  .barra-comparativa .bar-row:nth-child(1) .bar-track::after,
+  .barra-comparativa .bar-row:nth-child(2) .bar-track::after { content: ""; border-left: none; }
+
+  .barra-comparativa .bar-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.92rem;
+    font-weight: 500;
+    text-align: right;
+  }
+
+  .verediucto {
+    background: var(--abuse);
+    color: var(--bg);
+    padding: 22px 28px;
+    margin-top: 24px;
+    font-size: 1.05rem;
+    border-left: 4px solid #5a1820;
+  }
+  .verediucto strong { font-weight: 700; }
+
+  /* ============ TABELAS ============ */
+  .tabela-wrapper {
+    overflow-x: auto;
+    margin: 24px 0;
+    border: 1px solid var(--rule);
+    background: var(--bg-card);
+  }
+
+  table.amortizacao {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  table.amortizacao thead th {
+    background: var(--ink);
+    color: var(--bg);
+    padding: 12px 10px;
+    text-align: right;
+    font-weight: 500;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  table.amortizacao thead th:first-child { text-align: center; width: 50px; }
+  table.amortizacao thead th:nth-child(2) { text-align: center; }
+
+  table.amortizacao tbody td {
+    padding: 9px 10px;
+    text-align: right;
+    border-bottom: 1px solid var(--rule-soft);
+    color: var(--ink);
+  }
+  table.amortizacao tbody td:first-child {
+    text-align: center;
+    color: var(--ink-faint);
+    font-weight: 700;
+  }
+  table.amortizacao tbody td:nth-child(2) {
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 0.78rem;
+  }
+
+  table.amortizacao tbody tr:nth-child(even) td { background: var(--bg-alt); }
+  table.amortizacao tbody tr:hover td { background: var(--rule-soft); }
+
+  table.amortizacao tfoot td {
+    background: var(--ink);
+    color: var(--bg);
+    padding: 14px 10px;
+    text-align: right;
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+  table.amortizacao tfoot td:first-child { text-align: center; }
+  table.amortizacao tfoot td:nth-child(2) { text-align: center; }
+
+  /* Tabela comparativa lado-a-lado */
+  table.comparativa {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    margin: 20px 0;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  table.comparativa th {
+    background: var(--bg-alt);
+    padding: 10px 12px;
+    border-bottom: 2px solid var(--ink);
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-soft);
+    font-weight: 500;
+  }
+  table.comparativa th:first-child { text-align: left; }
+  table.comparativa td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--rule-soft);
+    text-align: right;
+  }
+  table.comparativa td:first-child {
+    text-align: left;
+    color: var(--ink-soft);
+    font-family: 'Source Serif 4', serif;
+  }
+  table.comparativa td.atual { color: var(--abuse); font-weight: 500; }
+  table.comparativa td.justo { color: var(--fair); font-weight: 500; }
+  table.comparativa td.dif { color: var(--gold); font-weight: 700; }
+
+  /* ============ CITAÇÃO ============ */
+  blockquote.pull {
+    font-family: 'Fraunces', serif;
+    font-size: 1.25rem;
+    font-style: italic;
+    color: var(--ink);
+    border-left: 3px solid var(--gold);
+    padding: 8px 0 8px 26px;
+    margin: 28px 0;
+    line-height: 1.4;
+  }
+  blockquote.pull cite {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--ink-faint);
+    font-style: normal;
+    margin-top: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* ============ CALLOUTS ============ */
+  .callout {
+    padding: 22px 26px;
+    margin: 24px 0;
+    border-left: 4px solid;
+    font-size: 0.96rem;
+  }
+  .callout.info { background: var(--neutral-bg); border-color: var(--neutral); }
+  .callout.warn { background: var(--warn-bg); border-color: var(--warn); }
+  .callout.fair { background: var(--fair-bg); border-color: var(--fair); }
+  .callout strong { font-weight: 700; }
+  .callout .icon {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 6px;
+    display: block;
+  }
+  .callout.info .icon { color: var(--neutral); }
+  .callout.warn .icon { color: var(--warn); }
+  .callout.fair .icon { color: var(--fair); }
+
+  /* ============ LINK BACEN ============ */
+  .bacen-evidencia {
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    padding: 26px 30px;
+    margin: 24px 0;
+  }
+  .bacen-evidencia .titulo {
+    font-family: 'Fraunces', serif;
+    font-size: 1.05rem;
+    font-weight: 500;
+    margin-bottom: 14px;
+  }
+
+  .bacen-mini-tabela {
+    margin: 14px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+  }
+  .bacen-mini-tabela .row {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    padding: 6px 0;
+    border-bottom: 1px dashed var(--rule);
+  }
+  .bacen-mini-tabela .row.destaque {
+    background: var(--fair-bg);
+    padding: 8px 10px;
+    border: 1px solid var(--fair);
+    margin: 4px 0;
+    font-weight: 700;
+    color: var(--fair);
+  }
+  .bacen-mini-tabela .row .data { color: var(--ink-soft); }
+
+  a {
+    color: var(--neutral);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+  a:hover { color: var(--abuse); }
+
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    background: var(--bg-alt);
+    padding: 2px 6px;
+    border-radius: 2px;
+    color: var(--ink);
+    word-break: break-all;
+  }
+
+  /* ============ RODAPÉ ============ */
+  footer.documento {
+    border-top: 2px solid var(--ink);
+    margin-top: 60px;
+    padding-top: 24px;
+    font-size: 0.82rem;
+    color: var(--ink-faint);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  footer.documento .right { text-align: right; }
+
+  /* ============ IMPRESSÃO ============ */
+  @media print {
+    body { background: white; }
+    .page { padding: 20px; max-width: 100%; }
+    .manchete, .verediucto, .glossario, .vs-block, .teste-stj { break-inside: avoid; }
+    table { break-inside: auto; }
+    tr { break-inside: avoid; break-after: auto; }
+    thead { display: table-header-group; }
+  }
+
+  @media (max-width: 700px) {
+    .page { padding: 30px 20px; }
+    .glossario { grid-template-columns: 1fr; }
+    .vs-block { grid-template-columns: 1fr; }
+    .vs-col.atual { border-right: none; border-bottom: 1px solid var(--rule); }
+    .vs-col.justo { border-left: none; border-top: 1px solid var(--rule); }
+    .vs-divisor { width: 100%; padding: 12px 0; }
+    .meta-strip { grid-template-columns: 1fr 1fr; }
+    .barra-comparativa .bar-row { grid-template-columns: 1fr; gap: 4px; }
+    .manchete .valor-grande { font-size: 3rem; }
+    footer.documento { grid-template-columns: 1fr; }
+    footer.documento .right { text-align: left; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="label">Análise revisional · Direito bancário</div>
+  <h1>Quanto este contrato <em>realmente</em> deveria custar.</h1>
+  <p class="sub">Comparativo entre a taxa praticada pelo Banco Daycoval e a taxa média de mercado apurada pelo Banco Central do Brasil para a mesma operação, na data de assinatura. Cédula de Crédito Bancário nº 14-3381541/25.</p>
+
+  <div class="meta-strip">
+    <div>
+      <div class="k">CCB nº</div>
+      <div class="v">14-3381541/25</div>
+    </div>
+    <div>
+      <div class="k">Data do contrato</div>
+      <div class="v">01 / dezembro / 2025</div>
+    </div>
+    <div>
+      <div class="k">Modalidade</div>
+      <div class="v">Aquisição de veículo</div>
+    </div>
+    <div>
+      <div class="k">Prazo</div>
+      <div class="v">24 parcelas</div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ MANCHETE ============ -->
+<div class="manchete">
+  <div class="marcador">A diferença em números</div>
+  <h2>Cobrança presumidamente indevida sobre a operação:</h2>
+  <div class="valor-grande"><span class="moeda">R$</span>6.267,84</div>
+  <div class="legenda">É quanto o consumidor pagaria a mais ao longo das 24 parcelas, em comparação com o que pagaria se a taxa de juros fosse a taxa média do mercado divulgada pelo Banco Central na mesma data.</div>
+</div>
+
+<!-- ============ SEÇÃO 1: GLOSSÁRIO ============ -->
+<section>
+  <div class="secao-numero">§ 01 · primeiro, os termos</div>
+  <h2 class="secao">Quatro conceitos que precisam ficar claros</h2>
+  <p class="descricao">Antes do cálculo, é preciso entender o vocabulário. Cada termo abaixo aparece no contrato — e cada um tem uma função distinta.</p>
+
+  <div class="glossario">
+
+    <div class="verbete">
+      <div class="termo">Saldo devedor <span class="ref">o que falta pagar</span></div>
+      <p>É o valor que ainda resta da dívida em qualquer momento da vida do contrato. Começa igual ao valor financiado e diminui a cada parcela paga.</p>
+      <div class="analogia">Pense no saldo do cartão de crédito. Se você comprou R$ 1.000 e pagou R$ 200, o saldo devedor é R$ 800.</div>
+    </div>
+
+    <div class="verbete">
+      <div class="termo">Juros remuneratórios <span class="ref">o "aluguel" do dinheiro</span></div>
+      <p>É a taxa que o banco cobra para emprestar. No contrato analisado: 3,22% ao mês. É como o aluguel que você paga por usar o dinheiro do banco durante 24 meses.</p>
+      <div class="analogia">Se você aluga uma casa, paga aluguel todo mês. Se você "aluga" R$ 33 mil do banco, paga juros todo mês.</div>
+    </div>
+
+    <div class="verbete">
+      <div class="termo">CET — Custo Efetivo Total <span class="ref">o aluguel + as taxas extras</span></div>
+      <p>É a soma dos juros mais todas as despesas embutidas (IOF, tarifa de cadastro, registro). No contrato: 4,09% ao mês — bem maior que os 3,22% "puros".</p>
+      <div class="analogia">É como aluguel + condomínio + IPTU. O CET é o "custo total real" do empréstimo.</div>
+    </div>
+
+    <div class="verbete">
+      <div class="termo">Tabela Price <span class="ref">parcelas iguais</span></div>
+      <p>Sistema em que todas as parcelas têm o mesmo valor. No início, a maior parte vai para juros e pouco abate o saldo; no fim, é o contrário.</p>
+      <div class="analogia">Como pagar uma piscina enchendo aos poucos: no começo, quase tudo evapora; no fim, quase tudo fica.</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ SEÇÃO 2: TAXA BACEN VERIFICADA ============ -->
+<section>
+  <div class="secao-numero">§ 02 · a taxa de referência</div>
+  <h2 class="secao">A taxa que o mercado realmente cobrou em dezembro/2025</h2>
+  <p class="descricao">O Banco Central publica mensalmente a taxa média que TODOS os bancos do país cobraram em cada tipo de operação. É um dado público, oficial, e serve de parâmetro objetivo para julgar abusividade.</p>
+
+  <p>Para "Aquisição de veículos — Pessoa Física", o BACEN publica a série <strong>SGS nº 25471</strong>, mensal. Consultando os dados oficiais (no momento da elaboração desta análise), as taxas dos últimos meses foram:</p>
+
+  <div class="bacen-evidencia">
+    <div class="titulo">📊 Taxa média de juros — Aquisição de veículos PF (% a.m.)</div>
+    <div class="bacen-mini-tabela">
+      <div class="row"><span class="data">01/05/2025</span><span class="num">2,05%</span></div>
+      <div class="row"><span class="data">01/06/2025</span><span class="num">2,05%</span></div>
+      <div class="row"><span class="data">01/07/2025</span><span class="num">2,03%</span></div>
+      <div class="row"><span class="data">01/08/2025</span><span class="num">2,03%</span></div>
+      <div class="row"><span class="data">01/09/2025</span><span class="num">2,03%</span></div>
+      <div class="row"><span class="data">01/10/2025</span><span class="num">2,04%</span></div>
+      <div class="row"><span class="data">01/11/2025</span><span class="num">2,01%</span></div>
+      <div class="row destaque"><span class="data">01/12/2025 ★</span><span class="num">1,97% a.m. ← data do contrato</span></div>
+      <div class="row"><span class="data">01/01/2026</span><span class="num">2,06%</span></div>
+      <div class="row"><span class="data">01/02/2026</span><span class="num">2,03%</span></div>
+    </div>
+
+    <p style="font-size: 0.88rem; margin-top: 18px; color: var(--ink-soft);"><strong>Fonte oficial — qualquer pessoa pode verificar:</strong></p>
+
+    <p style="font-size: 0.88rem; margin-bottom: 10px;">→ Link direto à API do BACEN (10 últimas taxas mensais):<br>
+    <a href="https://api.bcb.gov.br/dados/serie/bcdata.sgs.25471/dados/ultimos/10?formato=json" target="_blank">https://api.bcb.gov.br/dados/serie/bcdata.sgs.25471/dados/ultimos/10?formato=json</a></p>
+
+    <p style="font-size: 0.88rem; margin-bottom: 10px;">→ Consulta gráfica no SGS (Sistema Gerenciador de Séries Temporais):<br>
+    <a href="https://www3.bcb.gov.br/sgspub/consultarvalores/consultarValoresSeries.do?method=consultarGraficoPorId&hdOidSeriesSelecionadas=25471" target="_blank">www3.bcb.gov.br/sgspub — série 25471</a></p>
+
+    <p style="font-size: 0.88rem;">→ Para a taxa anual equivalente, série SGS nº 20749:<br>
+    <a href="https://api.bcb.gov.br/dados/serie/bcdata.sgs.20749/dados/ultimos/10?formato=json" target="_blank">https://api.bcb.gov.br/dados/serie/bcdata.sgs.20749/dados/ultimos/10?formato=json</a></p>
+  </div>
+</section>
+
+<!-- ============ SEÇÃO 3: O TESTE DO 1,5x ============ -->
+<section>
+  <div class="secao-numero">§ 03 · o parâmetro do STJ</div>
+  <h2 class="secao">A regra do "1,5 vezes acima da média"</h2>
+  <p class="descricao">O Superior Tribunal de Justiça pacificou: se o banco cobra mais do que 1,5× (uma vez e meia) a taxa média do mercado, presume-se abusividade. É o parâmetro objetivo a ser aplicado.</p>
+
+  <blockquote class="pull">
+    "Estando cabalmente comprovada por perícia que a estipulação da taxa de juros remuneratórios foi aproximadamente 150% maior que a taxa média praticada no mercado, nula é a cláusula do contrato."
+    <cite>STJ — REsp 1.061.530/RS · Tema 27 · Min. Nancy Andrighi</cite>
+  </blockquote>
+
+  <div class="teste-stj">
+
+    <h3>Aplicação ao caso concreto</h3>
+
+    <p>O parâmetro é simples: divide-se a taxa cobrada pela taxa média do BACEN. Se o resultado for maior que 1,5, a tese de abusividade está caracterizada pelo critério do STJ.</p>
+
+    <div class="formula">
+      <span class="num">3,22%</span> <span class="op">÷</span> <span class="num">1,97%</span> <span class="op">=</span> <span class="resultado num">1,6345 ×</span>
+    </div>
+
+    <h3 style="margin-top: 28px;">Visualização gráfica</h3>
+
+    <div class="barra-comparativa">
+
+      <div class="bar-row">
+        <div class="bar-label">Taxa média BACEN (12/2025)</div>
+        <div class="bar-track"><div class="bar-fill bacen"></div></div>
+        <div class="bar-value">1,97%</div>
+      </div>
+
+      <div class="bar-row">
+        <div class="bar-label">Limite tolerado pelo STJ (1,5×)</div>
+        <div class="bar-track"><div class="bar-fill limite"></div></div>
+        <div class="bar-value">2,955%</div>
+      </div>
+
+      <div class="bar-row">
+        <div class="bar-label">Taxa de juros contratada</div>
+        <div class="bar-track"><div class="bar-fill contratada"></div></div>
+        <div class="bar-value">3,22%</div>
+      </div>
+
+      <div class="bar-row">
+        <div class="bar-label">CET (custo efetivo total)</div>
+        <div class="bar-track"><div class="bar-fill cet"></div></div>
+        <div class="bar-value">4,09%</div>
+      </div>
+
+    </div>
+
+    <div class="verediucto">
+      <strong>VEREDITO:</strong> a taxa contratada de 3,22% a.m. corresponde a <strong>1,6345 vezes</strong> a taxa média do mercado. Ultrapassa em <strong>0,1345</strong> o gatilho de 1,5× fixado pelo STJ. <strong>Abusividade caracterizada</strong> pelo parâmetro objetivo do REsp 1.061.530/RS.
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <span class="icon">Observação técnica</span>
+    O parecer técnico recebido inicialmente comparou o <strong>CET (4,09%)</strong> com a média BACEN (1,97%), gerando múltiplo de 2,07×. <strong>Esta comparação é metodologicamente frágil</strong> porque o BACEN publica média de juros remuneratórios, não de CET. O ataque correto é taxa contratada (3,22%) vs. média BACEN (1,97%) — múltiplo de 1,63×. Já é suficiente para configurar abusividade pelo critério do STJ, sem necessidade de inflar a tese.
+  </div>
+</section>
+
+<!-- ============ SEÇÃO 4: O QUE É vs O QUE DEVERIA SER ============ -->
+<section>
+  <div class="secao-numero">§ 04 · comparativo lado a lado</div>
+  <h2 class="secao">O que <em>é</em> versus o que <em>deveria ser</em></h2>
+  <p class="descricao">Mantendo todos os parâmetros do contrato (valor financiado, prazo, sistema Price) e trocando <strong>apenas a taxa de juros</strong> pela média BACEN, eis o que sai:</p>
+
+  <div class="vs-block">
+
+    <div class="vs-col atual">
+      <div class="tag">o que é · contrato atual</div>
+      <h4>Taxa contratada — 3,22% a.m.</h4>
+      <div class="item"><span class="lbl">Valor financiado (PV)</span><span class="val">R$ 33.637,45</span></div>
+      <div class="item"><span class="lbl">Taxa de juros</span><span class="val">3,22% a.m.</span></div>
+      <div class="item"><span class="lbl">Nº de parcelas</span><span class="val">24</span></div>
+      <div class="item"><span class="lbl">Valor de cada parcela</span><span class="val">R$ 2.033,69</span></div>
+      <div class="item"><span class="lbl">Total de juros pagos</span><span class="val">R$ 15.171,11</span></div>
+      <div class="item"><span class="lbl">Total a pagar</span><span class="val">R$ 48.808,56</span></div>
+    </div>
+
+    <div class="vs-divisor">vs.</div>
+
+    <div class="vs-col justo">
+      <div class="tag">o que deveria ser · taxa BACEN</div>
+      <h4>Taxa média de mercado — 1,97% a.m.</h4>
+      <div class="item"><span class="lbl">Valor financiado (PV)</span><span class="val">R$ 33.637,45</span></div>
+      <div class="item"><span class="lbl">Taxa de juros</span><span class="val">1,97% a.m.</span></div>
+      <div class="item"><span class="lbl">Nº de parcelas</span><span class="val">24</span></div>
+      <div class="item"><span class="lbl">Valor de cada parcela</span><span class="val">R$ 1.772,41</span></div>
+      <div class="item"><span class="lbl">Total de juros pagos</span><span class="val">R$ 8.900,39</span></div>
+      <div class="item"><span class="lbl">Total a pagar</span><span class="val">R$ 42.537,84</span></div>
+    </div>
+
+  </div>
+
+  <h3>Síntese da diferença</h3>
+
+  <table class="comparativa">
+    <thead>
+      <tr>
+        <th>Item</th>
+        <th>Atual</th>
+        <th>Revisado</th>
+        <th>Diferença</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Parcela mensal</td>
+        <td class="atual">R$ 2.033,69</td>
+        <td class="justo">R$ 1.772,41</td>
+        <td class="dif">– R$ 261,28</td>
+      </tr>
+      <tr>
+        <td>Total de juros pagos em 24 meses</td>
+        <td class="atual">R$ 15.171,11</td>
+        <td class="justo">R$ 8.900,39</td>
+        <td class="dif">– R$ 6.270,72</td>
+      </tr>
+      <tr>
+        <td>Valor total a pagar</td>
+        <td class="atual">R$ 48.808,56</td>
+        <td class="justo">R$ 42.537,84</td>
+        <td class="dif">– R$ 6.270,72</td>
+      </tr>
+      <tr>
+        <td>Quanto os juros representam do valor financiado</td>
+        <td class="atual">45,10%</td>
+        <td class="justo">26,46%</td>
+        <td class="dif">– 18,64 p.p.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout fair">
+    <span class="icon">Em uma frase</span>
+    A cada parcela, o consumidor estaria pagando <strong>R$ 261,28 a mais do que a média do mercado cobraria pela mesma operação</strong>. Em 24 meses, o excesso totaliza R$ 6.270,72.
+  </div>
+</section>
+
+<!-- ============ SEÇÃO 5: TABELA DE AMORTIZAÇÃO REVISADA ============ -->
+<section>
+  <div class="secao-numero">§ 05 · tabela de amortização revisada</div>
+  <h2 class="secao">Mês a mês — como ficaria com a taxa BACEN</h2>
+  <p class="descricao">Tabela Price completa, parcela por parcela, calculada com a taxa de 1,97% a.m. (média BACEN para dezembro/2025) e PV de R$ 33.637,45 (Valor Líquido Financiado, que é a base contábil correta da operação).</p>
+
+  <h3>Como ler a tabela</h3>
+  <p style="margin-bottom: 8px;">Cada linha é uma parcela. Na <strong>Tabela Price</strong>, todas as parcelas têm o mesmo valor (R$ 1.772,41), mas a composição interna muda:</p>
+  <ul style="margin-left: 24px; margin-bottom: 18px; color: var(--ink-soft);">
+    <li><strong>No começo</strong>, a maior parte da parcela vai para juros (porque o saldo devedor é alto)</li>
+    <li><strong>No fim</strong>, a maior parte vai para amortização (porque o saldo já está quase zerado)</li>
+    <li>A coluna "saldo devedor" mostra quanto ainda resta da dívida ao final daquele mês</li>
+  </ul>
+
+  <div class="tabela-wrapper">
+    <table class="amortizacao">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Vencimento</th>
+          <th>Saldo inicial</th>
+          <th>Parcela</th>
+          <th>Juros</th>
+          <th>Amortização</th>
+          <th>Saldo devedor</th>
+        </tr>
+      </thead>
+      <tbody id="tbody-revisada"></tbody>
+      <tfoot>
+        <tr>
+          <td colspan="3">TOTAIS</td>
+          <td id="total-pmt">R$ 42.537,84</td>
+          <td id="total-juros">R$ 8.900,39</td>
+          <td id="total-amort">R$ 33.637,45</td>
+          <td>R$ 0,00</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <div class="callout info">
+    <span class="icon">Observação metodológica</span>
+    A escolha do PV de R$ 33.637,45 (Valor Líquido Financiado) é deliberada: é a base sobre a qual o contrato calcula a taxa de 3,22% a.m., portanto é a base correta para comparação direta com a taxa BACEN de 1,97% (que também é juros remuneratórios puros). Comparar ao IOF + tarifa + registro (que é o que está embutido no CET) seria comparar grandezas diferentes.
+  </div>
+</section>
+
+<!-- ============ SEÇÃO 6: CONCLUSÕES E ESTRATÉGIA ============ -->
+<section>
+  <div class="secao-numero">§ 06 · síntese estratégica</div>
+  <h2 class="secao">Conclusões para a inicial</h2>
+
+  <h3>1. Abusividade caracterizada pelo parâmetro objetivo do STJ</h3>
+  <p>Taxa contratada (3,22% a.m.) versus média BACEN (1,97% a.m.) = <strong>1,6345 vezes a média</strong>. Ultrapassa o gatilho de 1,5× fixado no REsp 1.061.530/RS (Tema 27).</p>
+
+  <h3>2. Pretensão revisional</h3>
+  <p>Limitação dos juros remuneratórios à taxa média BACEN da modalidade na data de assinatura (1,97% a.m. / aprox. 26,38% a.a.) com manutenção de todos os demais parâmetros (PV, prazo, sistema Price).</p>
+
+  <h3>3. Repetição do indébito</h3>
+  <p>Devolução das diferenças pagas a maior, em dobro, à luz do art. 42, parágrafo único, do CDC e da modulação do EAREsp 676.608/RS (STJ, Corte Especial, 30/03/2021), corrigidas desde cada pagamento por INPC + juros legais de 1% a.m. ou pela SELIC, conforme entendimento do tribunal competente.</p>
+
+  <h3>4. Tese subsidiária</h3>
+  <p>Caso o juízo entenda inaplicável a média BACEN, requerer subsidiariamente a aplicação da taxa expressamente mencionada na cláusula 5 do contrato (juros moratórios de 1% a.m.) ou de outra taxa que entenda cabível.</p>
+
+  <h3>5. Tutela de urgência</h3>
+  <p>Caso o cliente esteja em mora desde fevereiro/2026 (conforme indicado pela ausência de pagamentos no relatório), pleitear tutela para suspensão da mora, manutenção na posse do veículo (Súmula 380 do STJ) e depósito mensal das parcelas no valor revisado (R$ 1.772,41) em conta judicial.</p>
+</section>
+
+<footer class="documento">
+  <div>
+    <strong>Documento técnico</strong> · Análise revisional · Direito Bancário<br>
+    Cédula de Crédito Bancário nº 14-3381541/25 · Banco Daycoval S.A.
+  </div>
+  <div class="right">
+    Dados BACEN verificados em 29/04/2026<br>
+    Série SGS nº 25471 — fonte oficial
+  </div>
+</footer>
+
+</div>
+
+<script>
+// === Renderização da tabela de amortização revisada ===
+const dados = [{"n": 1, "saldo_inicial": 33637.45, "pmt": 1772.41, "juros": 662.66, "amortizacao": 1109.75, "saldo_final": 32527.7}, {"n": 2, "saldo_inicial": 32527.7, "pmt": 1772.41, "juros": 640.8, "amortizacao": 1131.62, "saldo_final": 31396.08}, {"n": 3, "saldo_inicial": 31396.08, "pmt": 1772.41, "juros": 618.5, "amortizacao": 1153.91, "saldo_final": 30242.17}, {"n": 4, "saldo_inicial": 30242.17, "pmt": 1772.41, "juros": 595.77, "amortizacao": 1176.64, "saldo_final": 29065.53}, {"n": 5, "saldo_inicial": 29065.53, "pmt": 1772.41, "juros": 572.59, "amortizacao": 1199.82, "saldo_final": 27865.71}, {"n": 6, "saldo_inicial": 27865.71, "pmt": 1772.41, "juros": 548.95, "amortizacao": 1223.46, "saldo_final": 26642.26}, {"n": 7, "saldo_inicial": 26642.26, "pmt": 1772.41, "juros": 524.85, "amortizacao": 1247.56, "saldo_final": 25394.7}, {"n": 8, "saldo_inicial": 25394.7, "pmt": 1772.41, "juros": 500.28, "amortizacao": 1272.14, "saldo_final": 24122.57}, {"n": 9, "saldo_inicial": 24122.57, "pmt": 1772.41, "juros": 475.21, "amortizacao": 1297.2, "saldo_final": 22825.37}, {"n": 10, "saldo_inicial": 22825.37, "pmt": 1772.41, "juros": 449.66, "amortizacao": 1322.75, "saldo_final": 21502.62}, {"n": 11, "saldo_inicial": 21502.62, "pmt": 1772.41, "juros": 423.6, "amortizacao": 1348.81, "saldo_final": 20153.81}, {"n": 12, "saldo_inicial": 20153.81, "pmt": 1772.41, "juros": 397.03, "amortizacao": 1375.38, "saldo_final": 18778.43}, {"n": 13, "saldo_inicial": 18778.43, "pmt": 1772.41, "juros": 369.94, "amortizacao": 1402.48, "saldo_final": 17375.95}, {"n": 14, "saldo_inicial": 17375.95, "pmt": 1772.41, "juros": 342.31, "amortizacao": 1430.1, "saldo_final": 15945.85}, {"n": 15, "saldo_inicial": 15945.85, "pmt": 1772.41, "juros": 314.13, "amortizacao": 1458.28, "saldo_final": 14487.57}, {"n": 16, "saldo_inicial": 14487.57, "pmt": 1772.41, "juros": 285.41, "amortizacao": 1487.01, "saldo_final": 13000.57}, {"n": 17, "saldo_inicial": 13000.57, "pmt": 1772.41, "juros": 256.11, "amortizacao": 1516.3, "saldo_final": 11484.27}, {"n": 18, "saldo_inicial": 11484.27, "pmt": 1772.41, "juros": 226.24, "amortizacao": 1546.17, "saldo_final": 9938.1}, {"n": 19, "saldo_inicial": 9938.1, "pmt": 1772.41, "juros": 195.78, "amortizacao": 1576.63, "saldo_final": 8361.46}, {"n": 20, "saldo_inicial": 8361.46, "pmt": 1772.41, "juros": 164.72, "amortizacao": 1607.69, "saldo_final": 6753.78}, {"n": 21, "saldo_inicial": 6753.78, "pmt": 1772.41, "juros": 133.05, "amortizacao": 1639.36, "saldo_final": 5114.41}, {"n": 22, "saldo_inicial": 5114.41, "pmt": 1772.41, "juros": 100.75, "amortizacao": 1671.66, "saldo_final": 3442.76}, {"n": 23, "saldo_inicial": 3442.76, "pmt": 1772.41, "juros": 67.82, "amortizacao": 1704.59, "saldo_final": 1738.17}, {"n": 24, "saldo_inicial": 1738.17, "pmt": 1772.41, "juros": 34.24, "amortizacao": 1738.17, "saldo_final": 0}];
+
+const tbody = document.getElementById('tbody-revisada');
+const meses = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+let dataIni = new Date(2026, 0, 1); // 01/01/2026 = primeiro vencimento
+
+function fmt(n) {
+  return 'R$ ' + n.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+}
+
+dados.forEach((linha, idx) => {
+  const data = new Date(2026, idx, 1);
+  const dataStr = ('0'+data.getDate()).slice(-2) + '/' + meses[data.getMonth()] + '/' + data.getFullYear();
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td>${linha.n}</td>
+    <td>${dataStr}</td>
+    <td>${fmt(linha.saldo_inicial)}</td>
+    <td>${fmt(linha.pmt)}</td>
+    <td>${fmt(linha.juros)}</td>
+    <td>${fmt(linha.amortizacao)}</td>
+    <td>${fmt(linha.saldo_final)}</td>
+  `;
+  tbody.appendChild(tr);
+});
+</script>
+
+</body>
+</html>

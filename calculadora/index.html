@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora de Abusividade · Financiamento de Veículos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F7F4ED;
+    --bg-soft: #EFEAE0;
+    --bg-card: #FFFFFF;
+    --ink: #16181D;
+    --ink-soft: #4F5562;
+    --ink-faint: #8A91A0;
+    --rule: #DBD3C2;
+    --rule-soft: #EDE7DA;
+
+    --abuse: #B0312D;
+    --abuse-deep: #7A1D1A;
+    --abuse-bg: #FBEDEB;
+    --abuse-bar: #C84640;
+
+    --warn: #C77B2A;
+    --warn-bg: #FBF1E0;
+
+    --fair: #2F6B3F;
+    --fair-bg: #E9F1EA;
+    --fair-bar: #4A8A5C;
+
+    --neutral: #2D5074;
+    --neutral-bg: #E7EEF6;
+
+    --gold: #9C7B3F;
+    --shadow-sm: 0 1px 2px rgba(20,22,28,0.06);
+    --shadow-md: 0 8px 24px -8px rgba(20,22,28,0.12);
+    --shadow-lg: 0 24px 48px -16px rgba(20,22,28,0.18);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 16px; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    background-image:
+      radial-gradient(circle at 10% 0%, rgba(156,123,63,0.04) 0%, transparent 40%),
+      radial-gradient(circle at 90% 100%, rgba(45,80,116,0.03) 0%, transparent 40%);
+    min-height: 100vh;
+  }
+
+  .container { max-width: 1100px; margin: 0 auto; padding: 40px 28px 80px; }
+
+  /* ================ HEADER ================ */
+  header.top {
+    margin-bottom: 36px;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--rule);
+  }
+  header.top .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+  header.top h1 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(1.9rem, 4vw, 2.6rem);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    color: var(--ink);
+  }
+  header.top h1 em {
+    font-style: italic;
+    color: var(--abuse);
+    font-weight: 400;
+  }
+  header.top .lead {
+    margin-top: 12px;
+    color: var(--ink-soft);
+    font-size: 1.02rem;
+    max-width: 720px;
+  }
+  header.top .badge-stj {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 14px;
+    padding: 6px 12px;
+    background: var(--bg-soft);
+    border: 1px solid var(--rule);
+    border-radius: 100px;
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  header.top .badge-stj .dot {
+    width: 6px; height: 6px;
+    background: var(--gold);
+    border-radius: 100%;
+  }
+
+  /* ================ GRID PRINCIPAL ================ */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+
+  @media (max-width: 980px) {
+    .main-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ================ FORMULÁRIO ================ */
+  .form-card {
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 28px 26px;
+    box-shadow: var(--shadow-md);
+    position: sticky;
+    top: 24px;
+  }
+
+  @media (max-width: 980px) { .form-card { position: static; } }
+
+  .form-card h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.3rem;
+    font-weight: 500;
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+  }
+  .form-card .form-sub {
+    color: var(--ink-soft);
+    font-size: 0.88rem;
+    margin-bottom: 22px;
+  }
+
+  .step-group {
+    margin-bottom: 22px;
+    padding-bottom: 22px;
+    border-bottom: 1px dashed var(--rule);
+  }
+  .step-group:last-of-type { border-bottom: none; padding-bottom: 12px; }
+
+  .step-group .step-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .step-group .step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px; height: 24px;
+    background: var(--ink);
+    color: var(--bg);
+    border-radius: 100%;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+  }
+  .step-group .step-title {
+    font-family: 'Fraunces', serif;
+    font-size: 1.02rem;
+    font-weight: 500;
+    color: var(--ink);
+  }
+
+  .field { margin-bottom: 14px; }
+  .field:last-child { margin-bottom: 0; }
+
+  .field label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+
+  .field .help-btn {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 0.72rem;
+    color: var(--neutral);
+    cursor: pointer;
+    background: none;
+    border: none;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    text-decoration-thickness: 1px;
+    text-decoration-style: dotted;
+  }
+  .field .help-btn:hover { color: var(--abuse); }
+
+  .field input[type="text"],
+  .field input[type="number"],
+  .field input[type="date"] {
+    width: 100%;
+    padding: 10px 12px;
+    background: var(--bg-soft);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+    color: var(--ink);
+    transition: all 0.15s ease;
+  }
+  .field input:focus {
+    outline: none;
+    border-color: var(--ink);
+    background: var(--bg-card);
+    box-shadow: 0 0 0 3px rgba(22,24,29,0.08);
+  }
+  .field .input-prefix {
+    position: relative;
+  }
+  .field .input-prefix::before {
+    content: attr(data-prefix);
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--ink-faint);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    pointer-events: none;
+  }
+  .field .input-prefix input { padding-left: 32px; }
+
+  .help-tip {
+    display: none;
+    margin-top: 8px;
+    padding: 12px 14px;
+    background: var(--neutral-bg);
+    border-left: 3px solid var(--neutral);
+    border-radius: 4px;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--ink);
+  }
+  .help-tip.show { display: block; animation: fadeIn 0.2s ease; }
+  .help-tip strong { color: var(--neutral); }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .bacen-status {
+    margin-top: 8px;
+    padding: 10px 12px;
+    border-radius: 4px;
+    font-size: 0.82rem;
+    font-family: 'JetBrains Mono', monospace;
+    display: none;
+  }
+  .bacen-status.loading { display: block; background: var(--bg-soft); color: var(--ink-soft); }
+  .bacen-status.success { display: block; background: var(--fair-bg); color: var(--fair); border-left: 3px solid var(--fair); }
+  .bacen-status.error { display: block; background: var(--abuse-bg); color: var(--abuse); border-left: 3px solid var(--abuse); }
+
+  .field .toggle-manual {
+    margin-top: 6px;
+    font-size: 0.78rem;
+    color: var(--neutral);
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    background: none;
+    border: none;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 24px;
+  }
+  .btn {
+    flex: 1;
+    padding: 12px 18px;
+    border: none;
+    border-radius: 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.92rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    letter-spacing: 0.01em;
+  }
+  .btn-primary {
+    background: var(--ink);
+    color: var(--bg);
+  }
+  .btn-primary:hover { background: #2a2d36; transform: translateY(-1px); box-shadow: var(--shadow-md); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--ink-soft);
+    border: 1px solid var(--rule);
+  }
+  .btn-secondary:hover { background: var(--bg-soft); color: var(--ink); }
+
+  .btn-link {
+    display: block;
+    width: 100%;
+    margin-top: 12px;
+    padding: 10px;
+    background: var(--bg-soft);
+    border: 1px dashed var(--rule);
+    border-radius: 6px;
+    color: var(--ink-soft);
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 0.86rem;
+    cursor: pointer;
+    text-align: center;
+  }
+  .btn-link:hover { background: var(--bg-card); color: var(--ink); border-style: solid; }
+
+  /* ================ RESULTADO ================ */
+  .result-area {
+    min-height: 600px;
+  }
+
+  .empty-state {
+    background: var(--bg-card);
+    border: 1px dashed var(--rule);
+    border-radius: 8px;
+    padding: 80px 40px;
+    text-align: center;
+    color: var(--ink-faint);
+  }
+  .empty-state .empty-icon {
+    font-family: 'Fraunces', serif;
+    font-size: 4rem;
+    font-style: italic;
+    color: var(--rule);
+    margin-bottom: 20px;
+    line-height: 1;
+  }
+  .empty-state h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.4rem;
+    font-weight: 500;
+    color: var(--ink-soft);
+    margin-bottom: 10px;
+  }
+  .empty-state p { font-size: 0.95rem; max-width: 360px; margin: 0 auto; }
+
+  /* ================ VEREDITO ================ */
+  .verdict-card {
+    border-radius: 8px;
+    padding: 36px 38px;
+    margin-bottom: 24px;
+    color: white;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    overflow: hidden;
+  }
+  .verdict-card::before {
+    content: "";
+    position: absolute;
+    top: 0; right: 0;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .verdict-card.abusivo { background: linear-gradient(135deg, var(--abuse) 0%, var(--abuse-deep) 100%); }
+  .verdict-card.fronteira { background: linear-gradient(135deg, var(--warn) 0%, #8A4F1A 100%); }
+  .verdict-card.regular { background: linear-gradient(135deg, var(--fair) 0%, #1F4A2A 100%); }
+
+  .verdict-card .verdict-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    opacity: 0.7;
+    margin-bottom: 10px;
+  }
+  .verdict-card h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 2.2rem;
+    font-weight: 500;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin-bottom: 14px;
+  }
+  .verdict-card .verdict-detail {
+    font-size: 1rem;
+    opacity: 0.95;
+    max-width: 560px;
+    line-height: 1.5;
+  }
+  .verdict-card .verdict-detail strong { font-weight: 700; }
+
+  .verdict-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255,255,255,0.2);
+  }
+  .verdict-stats > div {
+    padding: 0 16px;
+    border-right: 1px solid rgba(255,255,255,0.15);
+  }
+  .verdict-stats > div:first-child { padding-left: 0; }
+  .verdict-stats > div:last-child { border-right: none; padding-right: 0; }
+
+  .verdict-stats .stat-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    opacity: 0.6;
+    margin-bottom: 6px;
+  }
+  .verdict-stats .stat-value {
+    font-family: 'Fraunces', serif;
+    font-size: 1.65rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1;
+    font-feature-settings: "tnum";
+  }
+  .verdict-stats .stat-value .small { font-size: 0.85rem; opacity: 0.8; font-weight: 400; }
+
+  /* ================ CARDS DE DETALHE ================ */
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 700px) { .detail-grid { grid-template-columns: 1fr; } }
+
+  .detail-card {
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+  }
+  .detail-card .card-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .detail-card h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.15rem;
+    font-weight: 500;
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+  }
+  .detail-card .data-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 8px 0;
+    border-bottom: 1px dashed var(--rule-soft);
+    font-size: 0.92rem;
+  }
+  .detail-card .data-row:last-child { border-bottom: none; }
+  .detail-card .data-row .lbl { color: var(--ink-soft); }
+  .detail-card .data-row .val {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .detail-card .data-row .val.atual { color: var(--abuse); }
+  .detail-card .data-row .val.justo { color: var(--fair); }
+  .detail-card .data-row .val.dif { color: var(--gold); font-weight: 700; }
+
+  /* ================ BARRA VISUAL ================ */
+  .meter-card {
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 26px 28px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-sm);
+  }
+  .meter-card h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.15rem;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+  .meter-card .meter-sub {
+    color: var(--ink-soft);
+    font-size: 0.88rem;
+    margin-bottom: 22px;
+  }
+
+  .meter-row {
+    display: grid;
+    grid-template-columns: 200px 1fr 80px;
+    gap: 14px;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 0.88rem;
+  }
+  .meter-row .meter-label { color: var(--ink-soft); }
+  .meter-row .meter-track {
+    background: var(--bg-soft);
+    height: 26px;
+    position: relative;
+    border-radius: 3px;
+    overflow: hidden;
+    border: 1px solid var(--rule-soft);
+  }
+  .meter-row .meter-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .meter-row .meter-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    text-align: right;
+  }
+
+  .meter-track .threshold-line {
+    position: absolute;
+    top: -4px; bottom: -4px;
+    width: 2px;
+    background: var(--ink);
+    z-index: 2;
+  }
+  .meter-track .threshold-line::after {
+    content: "1,5×";
+    position: absolute;
+    top: -18px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--ink);
+    background: var(--bg);
+    padding: 0 4px;
+    white-space: nowrap;
+    font-weight: 700;
+  }
+
+  /* ================ ACCORDION TABELA ================ */
+  .accordion {
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    margin-bottom: 24px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+  }
+  .accordion-head {
+    padding: 18px 26px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--bg-card);
+    border: none;
+    width: 100%;
+    text-align: left;
+    transition: background 0.15s;
+  }
+  .accordion-head:hover { background: var(--bg-soft); }
+  .accordion-head h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin: 0;
+  }
+  .accordion-head .chev {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--ink-faint);
+    transition: transform 0.2s;
+  }
+  .accordion.open .accordion-head .chev { transform: rotate(180deg); }
+
+  .accordion-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+  }
+  .accordion.open .accordion-body { max-height: 3000px; }
+
+  .accordion-content { padding: 0 26px 24px; }
+
+  table.amort {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    margin-top: 8px;
+  }
+  table.amort thead th {
+    background: var(--ink);
+    color: var(--bg);
+    padding: 10px 8px;
+    text-align: right;
+    font-weight: 500;
+    font-size: 0.66rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  table.amort thead th:first-child, table.amort thead th:nth-child(2) { text-align: center; }
+  table.amort tbody td {
+    padding: 7px 8px;
+    text-align: right;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  table.amort tbody td:first-child {
+    text-align: center;
+    color: var(--ink-faint);
+    font-weight: 700;
+  }
+  table.amort tbody td:nth-child(2) {
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 0.74rem;
+  }
+  table.amort tbody tr:nth-child(even) td { background: var(--bg-soft); }
+  table.amort tbody tr:hover td { background: var(--rule-soft); }
+
+  /* ================ MODAL ================ */
+  .modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(20,22,28,0.6);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(4px);
+  }
+  .modal.show { display: flex; animation: fadeIn 0.2s ease; }
+  .modal-content {
+    background: var(--bg-card);
+    border-radius: 8px;
+    max-width: 540px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    padding: 32px;
+    box-shadow: var(--shadow-lg);
+  }
+  .modal-content h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 1.4rem;
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+  .modal-content p { margin-bottom: 12px; color: var(--ink-soft); font-size: 0.95rem; }
+  .modal-content strong { color: var(--ink); font-weight: 600; }
+  .modal-content .modal-close {
+    margin-top: 18px;
+    padding: 10px 22px;
+    background: var(--ink);
+    color: var(--bg);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+  }
+  .modal-content code {
+    background: var(--bg-soft);
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.85rem;
+    color: var(--ink);
+  }
+
+  /* ================ AÇÕES PÓS-CÁLCULO ================ */
+  .post-actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+  .post-actions .btn-pill {
+    padding: 10px 18px;
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    border-radius: 100px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.86rem;
+    color: var(--ink-soft);
+    transition: all 0.15s;
+  }
+  .post-actions .btn-pill:hover {
+    background: var(--ink);
+    color: var(--bg);
+    border-color: var(--ink);
+  }
+
+  .footer-disclaimer {
+    margin-top: 60px;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+    font-size: 0.78rem;
+    color: var(--ink-faint);
+    line-height: 1.6;
+  }
+  .footer-disclaimer a { color: var(--neutral); }
+
+  @media print {
+    body { background: white; }
+    .form-card, .post-actions, .footer-disclaimer { display: none; }
+    .main-grid { grid-template-columns: 1fr; }
+    .accordion-body { max-height: none !important; }
+    .accordion .chev { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header class="top">
+  <div class="eyebrow">Calculadora · Análise revisional</div>
+  <h1>Os juros do contrato são <em>abusivos</em>?</h1>
+  <p class="lead">Ferramenta para análise de financiamento de veículos pelo critério objetivo do STJ (1,5× a taxa média BACEN). Insira os dados do contrato e o sistema calcula a taxa efetiva, busca a taxa média do BACEN para a data e diagnostica abusividade automaticamente.</p>
+  <div class="badge-stj"><span class="dot"></span>STJ · REsp 1.061.530/RS · Tema 27</div>
+</header>
+
+<div class="main-grid">
+
+  <!-- ============ FORMULÁRIO ============ -->
+  <div class="form-card">
+    <h2>Dados do contrato</h2>
+    <p class="form-sub">Preencha com os números que aparecem na CCB ou no contrato de financiamento.</p>
+
+    <!-- Etapa 1 -->
+    <div class="step-group">
+      <div class="step-label">
+        <span class="step-num">1</span>
+        <span class="step-title">Identificação</span>
+      </div>
+
+      <div class="field">
+        <label>
+          <span>Data do contrato</span>
+          <button class="help-btn" data-help="data">o que é</button>
+        </label>
+        <input type="date" id="data-contrato" value="">
+        <div class="help-tip" id="help-data">
+          <strong>O que preencher:</strong> a data de assinatura/emissão da CCB (cláusula de cabeçalho do contrato).
+          Esta data determina qual taxa BACEN será usada como referência (a média daquele mês).
+        </div>
+      </div>
+    </div>
+
+    <!-- Etapa 2 -->
+    <div class="step-group">
+      <div class="step-label">
+        <span class="step-num">2</span>
+        <span class="step-title">Valores</span>
+      </div>
+
+      <div class="field">
+        <label>
+          <span>Valor financiado</span>
+          <button class="help-btn" data-help="pv">qual usar?</button>
+        </label>
+        <div class="input-prefix" data-prefix="R$">
+          <input type="text" id="pv" placeholder="0,00" inputmode="decimal">
+        </div>
+        <div class="help-tip" id="help-pv">
+          <strong>O QUE USAR:</strong> o "Valor Líquido Financiado" (geralmente identificado por essa frase no contrato — é o principal + IOF + tarifas).<br><br>
+          <strong>O QUE NÃO USAR:</strong> jamais o "Valor Total Financiado (com juros)", que é a soma de todas as parcelas. Esse valor já contém juros futuros embutidos.<br><br>
+          Em caso de dúvida: pegue o valor da parcela × número de parcelas. Esse total é o "com juros". O que você quer é o valor SEM juros.
+        </div>
+      </div>
+
+      <div class="field">
+        <label><span>Valor da parcela mensal</span></label>
+        <div class="input-prefix" data-prefix="R$">
+          <input type="text" id="pmt" placeholder="0,00" inputmode="decimal">
+        </div>
+      </div>
+
+      <div class="field">
+        <label><span>Número de parcelas</span></label>
+        <input type="number" id="n" placeholder="Ex: 24, 48, 60" min="1" max="120">
+      </div>
+    </div>
+
+    <!-- Etapa 3 -->
+    <div class="step-group">
+      <div class="step-label">
+        <span class="step-num">3</span>
+        <span class="step-title">Taxa média BACEN</span>
+      </div>
+
+      <div class="field">
+        <label>
+          <span>Taxa BACEN para a data (% a.m.)</span>
+          <button class="help-btn" data-help="bacen">como é obtida</button>
+        </label>
+        <div class="input-prefix" data-prefix="%">
+          <input type="text" id="taxa-bacen" placeholder="auto" inputmode="decimal">
+        </div>
+        <div id="bacen-status" class="bacen-status"></div>
+        <button class="toggle-manual" id="btn-buscar-bacen">↻ Buscar automaticamente do BACEN</button>
+        <div class="help-tip" id="help-bacen">
+          <strong>Origem:</strong> Banco Central, série SGS nº 25471 — taxa média mensal de juros para "Aquisição de veículos — Pessoa física".<br><br>
+          <strong>Como funciona:</strong> ao preencher a data, o sistema consulta a API pública do BACEN automaticamente. Se a consulta falhar, você pode preencher o valor manualmente — basta acessar o <a href="https://www3.bcb.gov.br/sgspub/consultarvalores/consultarValoresSeries.do?method=consultarGraficoPorId&hdOidSeriesSelecionadas=25471" target="_blank">SGS do BACEN</a>.
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-secondary" id="btn-limpar">Limpar</button>
+      <button class="btn btn-primary" id="btn-calcular">Analisar contrato</button>
+    </div>
+
+    <button class="btn-link" id="btn-exemplo">↳ Carregar exemplo (CCB Daycoval analisada)</button>
+  </div>
+
+  <!-- ============ ÁREA DE RESULTADO ============ -->
+  <div class="result-area" id="result-area">
+    <div class="empty-state">
+      <div class="empty-icon">∅</div>
+      <h3>Aguardando dados do contrato</h3>
+      <p>Preencha o formulário ao lado e clique em "Analisar contrato" para ver o diagnóstico de abusividade, a parcela revisada e a tabela completa de amortização.</p>
+    </div>
+  </div>
+</div>
+
+<footer class="footer-disclaimer">
+  <p><strong>Sobre os cálculos:</strong> a taxa efetiva é apurada pelo método de Newton-Raphson sobre a Tabela Price padrão. A taxa média BACEN é obtida em tempo real da série SGS nº 25471 (recursos livres / pessoas físicas / aquisição de veículos). O parâmetro de 1,5× decorre do REsp 1.061.530/RS (Tema 27 do STJ), aplicado pela Segunda Seção em julgamento de 22/10/2008.</p>
+  <p style="margin-top: 10px;"><strong>Limitações:</strong> esta calculadora não substitui parecer técnico contábil ou perícia judicial. O resultado é uma análise preliminar com base no parâmetro objetivo do STJ. A configuração de abusividade em juízo depende ainda de prova concreta sobre o perfil de risco da operação e o custo de captação do banco (REsp 2.009.614/SC). Verifique sempre a taxa BACEN diretamente em <a href="https://www3.bcb.gov.br/sgspub/" target="_blank">www3.bcb.gov.br/sgspub</a>.</p>
+</footer>
+
+</div>
+
+<!-- ============ MODAL DE AJUDA ============ -->
+<div class="modal" id="modal-help">
+  <div class="modal-content">
+    <h3 id="modal-title">Ajuda</h3>
+    <div id="modal-body"></div>
+    <button class="modal-close" id="modal-close">Fechar</button>
+  </div>
+</div>
+
+<script>
+// ==================================================================
+// CALCULADORA DE ABUSIVIDADE — FINANCIAMENTO DE VEÍCULOS
+// ==================================================================
+
+// ============ HELPERS ============
+const $ = (id) => document.getElementById(id);
+
+function fmtBRL(n) {
+  return n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function fmtPct(n, casas = 2) {
+  return n.toLocaleString('pt-BR', { minimumFractionDigits: casas, maximumFractionDigits: casas }) + '%';
+}
+
+// Parser para input no formato brasileiro (1.234,56 ou 1234,56 ou 1234.56)
+function parseNum(str) {
+  if (!str) return NaN;
+  str = String(str).trim().replace(/\s/g, '');
+  // Remove R$ se houver
+  str = str.replace(/R\$/gi, '').trim();
+  // Se tem vírgula, é separador decimal brasileiro
+  if (str.includes(',')) {
+    str = str.replace(/\./g, '').replace(',', '.');
+  }
+  return parseFloat(str);
+}
+
+// Auto-formatação no blur (input de moeda)
+function formataMoeda(input) {
+  const v = parseNum(input.value);
+  if (!isNaN(v) && v > 0) {
+    input.value = fmtBRL(v);
+  }
+}
+
+['pv','pmt','taxa-bacen'].forEach(id => {
+  const el = $(id);
+  if (el) {
+    el.addEventListener('blur', () => {
+      const v = parseNum(el.value);
+      if (id === 'taxa-bacen') {
+        if (!isNaN(v) && v > 0) el.value = v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+      } else {
+        if (!isNaN(v) && v > 0) el.value = fmtBRL(v);
+      }
+    });
+  }
+});
+
+// ============ HELP TOOLTIPS ============
+document.querySelectorAll('.help-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const id = btn.dataset.help;
+    const tip = $('help-' + id);
+    if (tip) tip.classList.toggle('show');
+  });
+});
+
+// ============ MODAL ============
+function showModal(title, body) {
+  $('modal-title').textContent = title;
+  $('modal-body').innerHTML = body;
+  $('modal-help').classList.add('show');
+}
+$('modal-close').addEventListener('click', () => $('modal-help').classList.remove('show'));
+$('modal-help').addEventListener('click', (e) => { if (e.target.id === 'modal-help') $('modal-help').classList.remove('show'); });
+
+// ============ NEWTON-RAPHSON: encontra a taxa efetiva ============
+function findRate(pv, pmt, n) {
+  // f(i) = pv * i * (1+i)^n / ((1+i)^n - 1) - pmt
+  // queremos f(i) = 0
+  let i = 0.02; // chute inicial 2% a.m.
+  for (let iter = 0; iter < 200; iter++) {
+    const pow = Math.pow(1 + i, n);
+    const f = pv * i * pow / (pow - 1) - pmt;
+    // derivada numérica
+    const h = 1e-7;
+    const pow2 = Math.pow(1 + i + h, n);
+    const f2 = pv * (i + h) * pow2 / (pow2 - 1) - pmt;
+    const df = (f2 - f) / h;
+    if (Math.abs(df) < 1e-12) break;
+    const newI = i - f / df;
+    if (Math.abs(newI - i) < 1e-12) return newI;
+    if (newI <= 0) i = i / 2;
+    else i = newI;
+  }
+  return i;
+}
+
+// ============ TABELA PRICE ============
+function pricePMT(pv, i, n) {
+  const pow = Math.pow(1 + i, n);
+  return pv * i * pow / (pow - 1);
+}
+
+function tabelaPrice(pv, i, n) {
+  const pmt = pricePMT(pv, i, n);
+  let saldo = pv;
+  const linhas = [];
+  let totalJuros = 0;
+  for (let k = 1; k <= n; k++) {
+    const juros = saldo * i;
+    let amort = pmt - juros;
+    const saldoIni = saldo;
+    saldo -= amort;
+    if (k === n) saldo = 0;
+    totalJuros += juros;
+    linhas.push({ n: k, saldoIni, pmt, juros, amort, saldoFim: saldo });
+  }
+  return { linhas, pmt, totalJuros };
+}
+
+// ============ BUSCA TAXA BACEN ============
+async function buscarTaxaBacen(dataStr) {
+  // dataStr no formato YYYY-MM-DD
+  if (!dataStr) return null;
+
+  const status = $('bacen-status');
+  status.className = 'bacen-status loading';
+  status.textContent = '↻ Consultando BACEN (série SGS 25471)...';
+
+  // Convertemos para o primeiro dia do mês (BACEN reporta mensal, sempre dia 01)
+  const [ano, mes, dia] = dataStr.split('-');
+  const dataInicial = `01/${mes}/${ano}`;
+  const dataFinal = `01/${mes}/${ano}`;
+
+  const url = `https://api.bcb.gov.br/dados/serie/bcdata.sgs.25471/dados?formato=json&dataInicial=${dataInicial}&dataFinal=${dataFinal}`;
+
+  try {
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    const dados = await resp.json();
+    if (Array.isArray(dados) && dados.length > 0) {
+      const valor = parseFloat(dados[0].valor.replace(',', '.'));
+      const dataEncontrada = dados[0].data;
+      status.className = 'bacen-status success';
+      status.innerHTML = `✓ BACEN ${dataEncontrada}: <strong>${fmtPct(valor)} a.m.</strong>`;
+      $('taxa-bacen').value = valor.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+      return valor;
+    } else {
+      throw new Error('Sem dados para a data');
+    }
+  } catch (e) {
+    status.className = 'bacen-status error';
+    status.innerHTML = '⚠ Não foi possível consultar o BACEN automaticamente. Insira a taxa manualmente — <a href="https://www3.bcb.gov.br/sgspub/consultarvalores/consultarValoresSeries.do?method=consultarGraficoPorId&hdOidSeriesSelecionadas=25471" target="_blank" style="color:inherit;">consulte aqui</a>.';
+    return null;
+  }
+}
+
+// Botão de busca manual
+$('btn-buscar-bacen').addEventListener('click', () => {
+  const data = $('data-contrato').value;
+  if (!data) { alert('Preencha a data do contrato primeiro.'); return; }
+  buscarTaxaBacen(data);
+});
+
+// Auto-busca quando a data é alterada
+$('data-contrato').addEventListener('change', () => {
+  const data = $('data-contrato').value;
+  if (data && !$('taxa-bacen').value) {
+    buscarTaxaBacen(data);
+  }
+});
+
+// ============ DIAGNÓSTICO ============
+function diagnostico(multiplo) {
+  if (multiplo > 1.5) {
+    return {
+      classe: 'abusivo',
+      titulo: 'Abusividade caracterizada',
+      eyebrow: 'Veredicto · acima do parâmetro do STJ',
+      detalhe: `A taxa contratada é <strong>${multiplo.toFixed(2).replace('.',',')}× maior que a taxa média do mercado</strong>. Como o STJ considera abusiva qualquer taxa acima de 1,5× a média (REsp 1.061.530/RS), há fundamento objetivo para ação revisional pleiteando a limitação dos juros à taxa média do BACEN.`
+    };
+  } else if (multiplo > 1.2) {
+    return {
+      classe: 'fronteira',
+      titulo: 'Zona cinzenta',
+      eyebrow: 'Veredicto · acima da média, abaixo do gatilho',
+      detalhe: `A taxa é <strong>${multiplo.toFixed(2).replace('.',',')}× a média BACEN</strong>. Está acima da média, mas não ultrapassa o gatilho objetivo de 1,5× do STJ. Tese revisional possível, porém com chance reduzida — exigirá prova concreta sobre o perfil de risco e custo de captação do banco (REsp 2.009.614/SC).`
+    };
+  } else {
+    return {
+      classe: 'regular',
+      titulo: 'Dentro do parâmetro',
+      eyebrow: 'Veredicto · em linha com o mercado',
+      detalhe: `A taxa contratada é <strong>${multiplo.toFixed(2).replace('.',',')}× a média BACEN</strong> — dentro da faixa que o STJ considera não abusiva. Não há fundamento objetivo para revisão da taxa pelo critério do REsp 1.061.530/RS. Investigar vícios acessórios (TAC, TEC, seguro embutido, anatocismo) pode ser mais produtivo.`
+    };
+  }
+}
+
+// ============ RENDER RESULTADO ============
+function renderResultado(d) {
+  const diag = diagnostico(d.multiplo);
+  const fillContratada = Math.min(100, (d.taxaEfetiva / (d.taxaBacen * 2.5)) * 100);
+  const fillMedia = Math.min(100, (d.taxaBacen / (d.taxaBacen * 2.5)) * 100);
+  const fillLimite = Math.min(100, ((d.taxaBacen * 1.5) / (d.taxaBacen * 2.5)) * 100);
+
+  let tabelaHtml = '<table class="amort"><thead><tr><th>#</th><th>Parcela</th><th>Saldo inicial</th><th>Valor</th><th>Juros</th><th>Amortização</th><th>Saldo final</th></tr></thead><tbody>';
+  d.tabela.linhas.forEach(l => {
+    tabelaHtml += `<tr>
+      <td>${l.n}</td>
+      <td>${l.n}/${d.n}</td>
+      <td>R$ ${fmtBRL(l.saldoIni)}</td>
+      <td>R$ ${fmtBRL(l.pmt)}</td>
+      <td>R$ ${fmtBRL(l.juros)}</td>
+      <td>R$ ${fmtBRL(l.amort)}</td>
+      <td>R$ ${fmtBRL(l.saldoFim)}</td>
+    </tr>`;
+  });
+  tabelaHtml += `</tbody></table>`;
+
+  const html = `
+    <div class="verdict-card ${diag.classe}">
+      <div class="verdict-eyebrow">${diag.eyebrow}</div>
+      <h2>${diag.titulo}</h2>
+      <div class="verdict-detail">${diag.detalhe}</div>
+
+      <div class="verdict-stats">
+        <div>
+          <div class="stat-label">Taxa contratada</div>
+          <div class="stat-value">${fmtPct(d.taxaEfetiva)} <span class="small">a.m.</span></div>
+        </div>
+        <div>
+          <div class="stat-label">Taxa BACEN</div>
+          <div class="stat-value">${fmtPct(d.taxaBacen)} <span class="small">a.m.</span></div>
+        </div>
+        <div>
+          <div class="stat-label">Múltiplo da média</div>
+          <div class="stat-value">${d.multiplo.toFixed(2).replace('.',',')}<span class="small">×</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="meter-card">
+      <h3>Comparação visual com o limite do STJ</h3>
+      <p class="meter-sub">A linha pontilhada marca o gatilho de 1,5× — acima dela, abusividade caracterizada pelo critério objetivo do STJ.</p>
+
+      <div class="meter-row">
+        <span class="meter-label">Taxa média BACEN</span>
+        <div class="meter-track">
+          <div class="meter-fill" style="background:var(--fair-bar);width:${fillMedia}%;"></div>
+          <div class="threshold-line" style="left:${fillLimite}%;"></div>
+        </div>
+        <span class="meter-value">${fmtPct(d.taxaBacen)}</span>
+      </div>
+
+      <div class="meter-row">
+        <span class="meter-label">Limite STJ (1,5× a média)</span>
+        <div class="meter-track">
+          <div class="meter-fill" style="background:var(--warn);width:${fillLimite}%;"></div>
+          <div class="threshold-line" style="left:${fillLimite}%;"></div>
+        </div>
+        <span class="meter-value">${fmtPct(d.taxaBacen * 1.5)}</span>
+      </div>
+
+      <div class="meter-row">
+        <span class="meter-label">Taxa contratada</span>
+        <div class="meter-track">
+          <div class="meter-fill" style="background:${diag.classe === 'abusivo' ? 'var(--abuse-bar)' : (diag.classe === 'fronteira' ? 'var(--warn)' : 'var(--fair-bar)')};width:${fillContratada}%;"></div>
+          <div class="threshold-line" style="left:${fillLimite}%;"></div>
+        </div>
+        <span class="meter-value">${fmtPct(d.taxaEfetiva)}</span>
+      </div>
+    </div>
+
+    <div class="detail-grid">
+      <div class="detail-card">
+        <div class="card-eyebrow">Como está hoje</div>
+        <h3>Contrato atual</h3>
+        <div class="data-row"><span class="lbl">Valor financiado</span><span class="val">R$ ${fmtBRL(d.pv)}</span></div>
+        <div class="data-row"><span class="lbl">Taxa de juros</span><span class="val atual">${fmtPct(d.taxaEfetiva)} a.m.</span></div>
+        <div class="data-row"><span class="lbl">Valor da parcela</span><span class="val atual">R$ ${fmtBRL(d.pmt)}</span></div>
+        <div class="data-row"><span class="lbl">Total de juros</span><span class="val atual">R$ ${fmtBRL(d.totalJurosAtual)}</span></div>
+        <div class="data-row"><span class="lbl">Total a pagar</span><span class="val atual">R$ ${fmtBRL(d.pmt * d.n)}</span></div>
+      </div>
+
+      <div class="detail-card">
+        <div class="card-eyebrow">Como deveria ser</div>
+        <h3>Com taxa BACEN</h3>
+        <div class="data-row"><span class="lbl">Valor financiado</span><span class="val">R$ ${fmtBRL(d.pv)}</span></div>
+        <div class="data-row"><span class="lbl">Taxa de juros</span><span class="val justo">${fmtPct(d.taxaBacen)} a.m.</span></div>
+        <div class="data-row"><span class="lbl">Valor da parcela</span><span class="val justo">R$ ${fmtBRL(d.pmtRev)}</span></div>
+        <div class="data-row"><span class="lbl">Total de juros</span><span class="val justo">R$ ${fmtBRL(d.totalJurosRev)}</span></div>
+        <div class="data-row"><span class="lbl">Total a pagar</span><span class="val justo">R$ ${fmtBRL(d.pmtRev * d.n)}</span></div>
+      </div>
+    </div>
+
+    <div class="detail-card" style="margin-bottom: 24px; background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-soft) 100%);">
+      <div class="card-eyebrow" style="color: var(--gold)">Diferença · cobrança presumidamente indevida</div>
+      <h3>Quanto o consumidor pagaria a mais</h3>
+      <div class="data-row"><span class="lbl">Diferença por parcela</span><span class="val dif">R$ ${fmtBRL(d.pmt - d.pmtRev)}</span></div>
+      <div class="data-row"><span class="lbl">Diferença em ${d.n} parcelas</span><span class="val dif" style="font-size:1.2rem;">R$ ${fmtBRL((d.pmt - d.pmtRev) * d.n)}</span></div>
+      <div class="data-row"><span class="lbl">Devolução em dobro (CDC art. 42, § único)</span><span class="val dif">R$ ${fmtBRL((d.pmt - d.pmtRev) * d.n * 2)}</span></div>
+    </div>
+
+    <div class="post-actions">
+      <button class="btn-pill" onclick="window.print()">🖨 Imprimir / salvar PDF</button>
+      <button class="btn-pill" onclick="document.querySelector('.accordion').classList.toggle('open')">▼ Tabela de amortização revisada</button>
+      <button class="btn-pill" id="btn-copiar-resumo">📋 Copiar resumo</button>
+    </div>
+
+    <div class="accordion">
+      <button class="accordion-head" onclick="this.parentElement.classList.toggle('open')">
+        <h3>Tabela de amortização revisada (Price · taxa BACEN)</h3>
+        <span class="chev">▼</span>
+      </button>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          ${tabelaHtml}
+        </div>
+      </div>
+    </div>
+  `;
+
+  $('result-area').innerHTML = html;
+
+  // Listener para copiar resumo
+  document.getElementById('btn-copiar-resumo').addEventListener('click', () => {
+    const resumo = `ANÁLISE DE ABUSIVIDADE — Financiamento de Veículos
+Data do contrato: ${$('data-contrato').value}
+${diag.titulo.toUpperCase()}
+
+CONTRATO ATUAL:
+- Valor financiado: R$ ${fmtBRL(d.pv)}
+- Taxa de juros efetiva: ${fmtPct(d.taxaEfetiva)} a.m.
+- Parcela: R$ ${fmtBRL(d.pmt)}
+- ${d.n} parcelas = R$ ${fmtBRL(d.pmt * d.n)}
+
+TAXA BACEN (REFERÊNCIA):
+- Taxa média do mercado: ${fmtPct(d.taxaBacen)} a.m.
+- Múltiplo: ${d.multiplo.toFixed(4).replace('.',',')}× a média
+- Parâmetro STJ (Tema 27): 1,5× a média
+
+CENÁRIO REVISADO (com taxa BACEN):
+- Parcela revisada: R$ ${fmtBRL(d.pmtRev)}
+- Total a pagar: R$ ${fmtBRL(d.pmtRev * d.n)}
+
+DIFERENÇA / COBRANÇA INDEVIDA:
+- Por parcela: R$ ${fmtBRL(d.pmt - d.pmtRev)}
+- Total em ${d.n} parcelas: R$ ${fmtBRL((d.pmt - d.pmtRev) * d.n)}
+- Devolução em dobro (CDC): R$ ${fmtBRL((d.pmt - d.pmtRev) * d.n * 2)}
+
+Fonte BACEN: série SGS nº 25471
+Critério: REsp 1.061.530/RS · Tema 27 STJ`;
+    navigator.clipboard.writeText(resumo).then(() => {
+      const btn = document.getElementById('btn-copiar-resumo');
+      btn.textContent = '✓ Copiado!';
+      setTimeout(() => btn.textContent = '📋 Copiar resumo', 2000);
+    });
+  });
+}
+
+// ============ AÇÃO PRINCIPAL: CALCULAR ============
+$('btn-calcular').addEventListener('click', async () => {
+  const pv = parseNum($('pv').value);
+  const pmt = parseNum($('pmt').value);
+  const n = parseInt($('n').value);
+  const taxaBacenInput = parseNum($('taxa-bacen').value);
+  const dataContrato = $('data-contrato').value;
+
+  // Validações
+  const erros = [];
+  if (!dataContrato) erros.push('Data do contrato');
+  if (isNaN(pv) || pv <= 0) erros.push('Valor financiado');
+  if (isNaN(pmt) || pmt <= 0) erros.push('Valor da parcela');
+  if (isNaN(n) || n < 1) erros.push('Número de parcelas');
+
+  if (erros.length > 0) {
+    showModal('Campos obrigatórios', '<p>Preencha os seguintes campos antes de calcular:</p><ul style="margin-left:20px;margin-top:10px;color:var(--abuse);">' + erros.map(e => '<li>' + e + '</li>').join('') + '</ul>');
+    return;
+  }
+
+  // Sanity check: parcela × n deve ser maior que pv (se não, não há juros)
+  if (pmt * n <= pv) {
+    showModal('Verifique os dados', '<p>O total das parcelas (parcela × nº de parcelas = <strong>R$ ' + fmtBRL(pmt*n) + '</strong>) é menor ou igual ao valor financiado (<strong>R$ ' + fmtBRL(pv) + '</strong>). Isso significa juros zero ou negativos — provavelmente algum dos valores está errado.</p><p style="margin-top:12px;">Lembrete: o "Valor financiado" é o valor SEM juros. Não use o "Valor Total Financiado (com juros)".</p>');
+    return;
+  }
+
+  // Busca taxa BACEN se não preenchida
+  let taxaBacen = taxaBacenInput;
+  if (isNaN(taxaBacen) || taxaBacen <= 0) {
+    const res = await buscarTaxaBacen(dataContrato);
+    if (res) taxaBacen = res;
+    else {
+      showModal('Taxa BACEN necessária', '<p>Não foi possível obter automaticamente a taxa BACEN. Por favor, preencha manualmente o campo "Taxa BACEN" — você pode obtê-la em <a href="https://www3.bcb.gov.br/sgspub/consultarvalores/consultarValoresSeries.do?method=consultarGraficoPorId&hdOidSeriesSelecionadas=25471" target="_blank">SGS · BACEN, série 25471</a>.</p><p style="margin-top:12px;">Procure pelo mês/ano da data do contrato e digite o valor (em % a.m.) no campo correspondente.</p>');
+      return;
+    }
+  }
+
+  // ===== CÁLCULOS =====
+  const taxaBacenDec = taxaBacen / 100;
+  const taxaEfetivaDec = findRate(pv, pmt, n);
+  const taxaEfetiva = taxaEfetivaDec * 100;
+  const multiplo = taxaEfetivaDec / taxaBacenDec;
+
+  // Tabela revisada (com taxa BACEN)
+  const tabela = tabelaPrice(pv, taxaBacenDec, n);
+  const pmtRev = tabela.pmt;
+
+  // Total juros atual (apenas a soma das parcelas - pv)
+  const totalJurosAtual = pmt * n - pv;
+
+  renderResultado({
+    pv, pmt, n,
+    taxaEfetiva, taxaBacen, multiplo,
+    pmtRev,
+    totalJurosAtual,
+    totalJurosRev: tabela.totalJuros,
+    tabela
+  });
+
+  // Scroll para resultado em mobile
+  if (window.innerWidth < 980) {
+    setTimeout(() => $('result-area').scrollIntoView({behavior:'smooth', block:'start'}), 100);
+  }
+});
+
+// ============ LIMPAR ============
+$('btn-limpar').addEventListener('click', () => {
+  ['pv','pmt','n','taxa-bacen'].forEach(id => $(id).value = '');
+  $('data-contrato').value = '';
+  $('bacen-status').className = 'bacen-status';
+  $('bacen-status').textContent = '';
+  document.querySelectorAll('.help-tip').forEach(t => t.classList.remove('show'));
+  $('result-area').innerHTML = `
+    <div class="empty-state">
+      <div class="empty-icon">∅</div>
+      <h3>Aguardando dados do contrato</h3>
+      <p>Preencha o formulário ao lado e clique em "Analisar contrato" para ver o diagnóstico de abusividade, a parcela revisada e a tabela completa de amortização.</p>
+    </div>
+  `;
+});
+
+// ============ EXEMPLO ============
+$('btn-exemplo').addEventListener('click', () => {
+  $('data-contrato').value = '2025-12-01';
+  $('pv').value = '33.637,45';
+  $('pmt').value = '2.033,69';
+  $('n').value = '24';
+  $('taxa-bacen').value = '1,97';
+  $('bacen-status').className = 'bacen-status success';
+  $('bacen-status').innerHTML = '✓ Exemplo: BACEN 01/12/2025 = <strong>1,97% a.m.</strong>';
+});
+
+</script>
+</body>
+</html>
