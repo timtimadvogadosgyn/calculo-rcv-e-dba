@@ -1,0 +1,46 @@
+# Deploy automático para GitHub Pages
+# Este workflow é OPCIONAL. Por padrão, GitHub Pages já serve o site
+# automaticamente a partir da branch main quando ativado em Settings > Pages.
+# Use este workflow apenas se quiser controle adicional sobre o processo de deploy.
+
+name: Deploy to GitHub Pages
+
+on:
+  # Roda em cada push para main
+  push:
+    branches: [main]
+  # Permite acionar manualmente pela interface do GitHub
+  workflow_dispatch:
+
+# Permissões necessárias para deploy no Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Garante que apenas um deploy roda por vez
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar Pages
+        uses: actions/configure-pages@v4
+
+      - name: Empacotar artefato
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Publicar no GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
