@@ -408,16 +408,23 @@
   }
   .verdict-card .verdict-detail strong { font-weight: 700; }
 
+  /* Atualizar .verdict-stats para 4 colunas com responsividade */
   .verdict-stats {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 0;
     margin-top: 24px;
     padding-top: 24px;
     border-top: 1px solid rgba(255,255,255,0.2);
   }
+  @media (max-width: 700px) {
+    .verdict-stats { grid-template-columns: 1fr 1fr; gap: 16px 0; }
+    .verdict-stats > div { border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 14px; }
+    .verdict-stats > div:nth-child(2) { border-right: none; }
+    .verdict-stats > div:nth-child(3), .verdict-stats > div:nth-child(4) { border-bottom: none; }
+  }
   .verdict-stats > div {
-    padding: 0 16px;
+    padding: 0 14px;
     border-right: 1px solid rgba(255,255,255,0.15);
   }
   .verdict-stats > div:first-child { padding-left: 0; }
@@ -433,13 +440,68 @@
   }
   .verdict-stats .stat-value {
     font-family: 'Fraunces', serif;
-    font-size: 1.65rem;
+    font-size: 1.45rem;
     font-weight: 500;
     letter-spacing: -0.01em;
     line-height: 1;
     font-feature-settings: "tnum";
   }
+  .verdict-stats .stat-value.principal { font-size: 1.65rem; }
   .verdict-stats .stat-value .small { font-size: 0.85rem; opacity: 0.8; font-weight: 400; }
+  .verdict-stats .stat-value .anual {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 400;
+    opacity: 0.6;
+    letter-spacing: 0.02em;
+    margin-top: 4px;
+    font-feature-settings: "tnum";
+  }
+
+  /* Anual nas data-rows dos cards detalhados */
+  .data-row .val .anual {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 400;
+    color: var(--ink-faint);
+    margin-top: 2px;
+    letter-spacing: 0.01em;
+  }
+
+  /* Nota técnica sobre múltiplos */
+  .nota-multiplos {
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 18px 22px;
+    margin-bottom: 24px;
+    font-size: 0.86rem;
+    color: var(--ink-soft);
+    line-height: 1.55;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .nota-multiplos .nota-icon {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 1.6rem;
+    color: var(--gold);
+    line-height: 1;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .nota-multiplos strong { color: var(--ink); font-weight: 600; }
+  .nota-multiplos code {
+    background: var(--bg-soft);
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--ink);
+  }
 
   /* ================ CARDS DE DETALHE ================ */
   .detail-grid {
@@ -933,6 +995,15 @@ function showModal(title, body) {
 $('modal-close').addEventListener('click', () => $('modal-help').classList.remove('show'));
 $('modal-help').addEventListener('click', (e) => { if (e.target.id === 'modal-help') $('modal-help').classList.remove('show'); });
 
+// ============ CONVERSÃO MENSAL → ANUAL ============
+// Capitalização composta: equivalência matemática entre as taxas.
+// Não traz tese jurídica nova — é apenas reapresentação da mesma taxa
+// em escala anual, útil para impacto retórico e verificação cruzada.
+// Ver CLAUDE.md, seção "Lógica de negócio".
+function taxaMensalParaAnual(im) {
+  return Math.pow(1 + im, 12) - 1;
+}
+
 // ============ NEWTON-RAPHSON: encontra a taxa efetiva ============
 function findRate(pv, pmt, n) {
   // f(i) = pv * i * (1+i)^n / ((1+i)^n - 1) - pmt
@@ -978,36 +1049,85 @@ function tabelaPrice(pv, i, n) {
   return { linhas, pmt, totalJuros };
 }
 
-// ============ BUSCA TAXA BACEN ============
+// ============ BUSCA BACEN — MENSAL (25471) + ANUAL OFICIAL (20749) ============
+// Busca as duas séries em paralelo para não adicionar latência.
+// A taxa anual oficial (20749) é publicada independentemente pelo BACEN
+// e pode diferir ligeiramente da derivada matemática por diferenças de
+// metodologia e arredondamento. Em juízo, o dado oficial é mais robusto.
 async function buscarTaxaBacen(dataStr) {
-  // dataStr no formato YYYY-MM-DD
   if (!dataStr) return null;
 
   const status = $('bacen-status');
   status.className = 'bacen-status loading';
-  status.textContent = '↻ Consultando BACEN (série SGS 25471)...';
+  status.textContent = '↻ Consultando BACEN (séries 25471 e 20749)...';
 
-  // Convertemos para o primeiro dia do mês (BACEN reporta mensal, sempre dia 01)
-  const [ano, mes, dia] = dataStr.split('-');
+  const [ano, mes] = dataStr.split('-');
   const dataInicial = `01/${mes}/${ano}`;
-  const dataFinal = `01/${mes}/${ano}`;
+  const dataFinal   = `01/${mes}/${ano}`;
 
-  const url = `https://api.bcb.gov.br/dados/serie/bcdata.sgs.25471/dados?formato=json&dataInicial=${dataInicial}&dataFinal=${dataFinal}`;
+  const urlMensal = `https://api.bcb.gov.br/dados/serie/bcdata.sgs.25471/dados?formato=json&dataInicial=${dataInicial}&dataFinal=${dataFinal}`;
+  const urlAnual  = `https://api.bcb.gov.br/dados/serie/bcdata.sgs.20749/dados?formato=json&dataInicial=${dataInicial}&dataFinal=${dataFinal}`;
 
   try {
-    const resp = await fetch(url);
-    if (!resp.ok) throw new Error('HTTP ' + resp.status);
-    const dados = await resp.json();
-    if (Array.isArray(dados) && dados.length > 0) {
-      const valor = parseFloat(dados[0].valor.replace(',', '.'));
-      const dataEncontrada = dados[0].data;
-      status.className = 'bacen-status success';
-      status.innerHTML = `✓ BACEN ${dataEncontrada}: <strong>${fmtPct(valor)} a.m.</strong>`;
-      $('taxa-bacen').value = valor.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
-      return valor;
-    } else {
-      throw new Error('Sem dados para a data');
+    // Busca as duas séries em paralelo — sem latência extra perceptível
+    const [respMensal, respAnual] = await Promise.all([
+      fetch(urlMensal),
+      fetch(urlAnual)
+    ]);
+
+    if (!respMensal.ok) throw new Error('Série mensal indisponível');
+
+    const [dadosMensal, dadosAnual] = await Promise.all([
+      respMensal.json(),
+      respAnual.ok ? respAnual.json() : Promise.resolve([])
+    ]);
+
+    if (!Array.isArray(dadosMensal) || dadosMensal.length === 0) {
+      throw new Error('Sem dados para a data informada');
     }
+
+    const taxaMensalBacen = parseFloat(dadosMensal[0].valor.replace(',', '.'));
+    const dataEncontrada  = dadosMensal[0].data;
+
+    // Taxa anual: oficial (série 20749) se disponível, derivada como fallback
+    let taxaAnualBacen;
+    let fonteAnual;
+    if (Array.isArray(dadosAnual) && dadosAnual.length > 0) {
+      taxaAnualBacen = parseFloat(dadosAnual[0].valor.replace(',', '.'));
+      fonteAnual = 'oficial';
+    } else {
+      // Fallback: deriva matematicamente da mensal por capitalização composta
+      taxaAnualBacen = (Math.pow(1 + taxaMensalBacen / 100, 12) - 1) * 100;
+      fonteAnual = 'derivada';
+    }
+
+    // Taxa anual derivada para verificação cruzada (sempre calculada)
+    const taxaAnualDerivada = (Math.pow(1 + taxaMensalBacen / 100, 12) - 1) * 100;
+    const deltaAnual = Math.abs(taxaAnualBacen - taxaAnualDerivada);
+
+    // Atualiza o campo da taxa mensal no formulário
+    $('taxa-bacen').value = taxaMensalBacen.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+
+    // Monta mensagem de status com mensal + anual
+    let statusMsg = `✓ BACEN ${dataEncontrada}: <strong>${taxaMensalBacen.toLocaleString('pt-BR', {minimumFractionDigits: 2})}% a.m.</strong>`;
+    if (fonteAnual === 'oficial') {
+      statusMsg += ` · <strong>${taxaAnualBacen.toFixed(2).replace('.', ',')}% a.a.</strong> (oficial)`;
+    } else {
+      statusMsg += ` · ${taxaAnualBacen.toFixed(2).replace('.', ',')}% a.a. (derivada — série 20749 indisponível)`;
+    }
+    status.className = 'bacen-status success';
+    status.innerHTML = statusMsg;
+
+    // Retorna objeto completo para o chamador
+    return {
+      mensal: taxaMensalBacen,
+      anual: taxaAnualBacen,
+      anualDerivada: taxaAnualDerivada,
+      deltaAnual: deltaAnual,
+      fonteAnual,
+      data: dataEncontrada
+    };
+
   } catch (e) {
     status.className = 'bacen-status error';
     status.innerHTML = '⚠ Não foi possível consultar o BACEN automaticamente. Insira a taxa manualmente — <a href="https://www3.bcb.gov.br/sgspub/consultarvalores/consultarValoresSeries.do?method=consultarGraficoPorId&hdOidSeriesSelecionadas=25471" target="_blank" style="color:inherit;">consulte aqui</a>.';
@@ -1019,46 +1139,89 @@ async function buscarTaxaBacen(dataStr) {
 $('btn-buscar-bacen').addEventListener('click', () => {
   const data = $('data-contrato').value;
   if (!data) { alert('Preencha a data do contrato primeiro.'); return; }
-  buscarTaxaBacen(data);
+  buscarTaxaBacen(data).then(resultado => {
+    if (resultado) {
+      // Armazena globalmente para uso no cálculo principal
+      // window._bacen* são temporárias — padrão aceitável no single-file
+      window._bacenAnualOficial  = resultado.anual;
+      window._bacenAnualDerivada = resultado.anualDerivada;
+      window._bacenFonteAnual    = resultado.fonteAnual;
+      window._bacenDeltaAnual    = resultado.deltaAnual;
+    }
+  });
 });
 
 // Auto-busca quando a data é alterada
 $('data-contrato').addEventListener('change', () => {
   const data = $('data-contrato').value;
   if (data && !$('taxa-bacen').value) {
-    buscarTaxaBacen(data);
+    buscarTaxaBacen(data).then(resultado => {
+      if (resultado) {
+        window._bacenAnualOficial  = resultado.anual;
+        window._bacenAnualDerivada = resultado.anualDerivada;
+        window._bacenFonteAnual    = resultado.fonteAnual;
+        window._bacenDeltaAnual    = resultado.deltaAnual;
+      }
+    });
   }
 });
 
 // ============ DIAGNÓSTICO ============
-function diagnostico(multiplo) {
-  if (multiplo > 1.5) {
+// Recebe ambos os múltiplos (mensal e anual derivada).
+// Lógica de classificação:
+//   - Ambos > 1,5  → ABUSIVO (caso forte)
+//   - Apenas anual > 1,5 (mensal entre 1,2 e 1,5) → ABUSIVO LIMÍTROFE
+//   - Algum entre 1,2 e 1,5 → ZONA CINZENTA
+//   - Ambos ≤ 1,2 → REGULAR
+function diagnostico(multipMensal, multipAnual) {
+  const mensalAbus = multipMensal > 1.5;
+  const anualAbus = multipAnual > 1.5;
+  const fmt = (n) => n.toFixed(2).replace('.', ',');
+
+  if (mensalAbus && anualAbus) {
     return {
       classe: 'abusivo',
       titulo: 'Abusividade caracterizada',
       eyebrow: 'Veredicto · acima do parâmetro do STJ',
-      detalhe: `A taxa contratada é <strong>${multiplo.toFixed(2).replace('.',',')}× maior que a taxa média do mercado</strong>. Como o STJ considera abusiva qualquer taxa acima de 1,5× a média (REsp 1.061.530/RS), há fundamento objetivo para ação revisional pleiteando a limitação dos juros à taxa média do BACEN.`
+      detalhe: `A taxa contratada é <strong>${fmt(multipMensal)}× a taxa média mensal</strong> e <strong>${fmt(multipAnual)}× a taxa média anual</strong> do mercado. Em ambas as escalas o múltiplo ultrapassa o gatilho de 1,5× fixado pelo STJ no REsp 1.061.530/RS (Tema 27). Há fundamento objetivo robusto para ação revisional pleiteando a limitação dos juros à taxa média do BACEN.`
     };
-  } else if (multiplo > 1.2) {
+  }
+
+  if (!mensalAbus && anualAbus) {
+    return {
+      classe: 'abusivo',
+      titulo: 'Abusividade caracterizada (na escala anual)',
+      eyebrow: 'Veredicto · limítrofe — fundamento na taxa anual',
+      detalhe: `Resultado limítrofe: na escala mensal o múltiplo é <strong>${fmt(multipMensal)}×</strong> (zona cinzenta), mas na escala anual é <strong>${fmt(multipAnual)}×</strong>, ultrapassando o gatilho de 1,5× do STJ. A capitalização composta amplifica a diferença ao longo do ano. Tese viável construindo a fundamentação sobre a taxa anual efetiva — útil em casos onde a taxa mensal sozinha não passaria do parâmetro objetivo.`
+    };
+  }
+
+  if (multipMensal > 1.2 || multipAnual > 1.2) {
     return {
       classe: 'fronteira',
       titulo: 'Zona cinzenta',
       eyebrow: 'Veredicto · acima da média, abaixo do gatilho',
-      detalhe: `A taxa é <strong>${multiplo.toFixed(2).replace('.',',')}× a média BACEN</strong>. Está acima da média, mas não ultrapassa o gatilho objetivo de 1,5× do STJ. Tese revisional possível, porém com chance reduzida — exigirá prova concreta sobre o perfil de risco e custo de captação do banco (REsp 2.009.614/SC).`
-    };
-  } else {
-    return {
-      classe: 'regular',
-      titulo: 'Dentro do parâmetro',
-      eyebrow: 'Veredicto · em linha com o mercado',
-      detalhe: `A taxa contratada é <strong>${multiplo.toFixed(2).replace('.',',')}× a média BACEN</strong> — dentro da faixa que o STJ considera não abusiva. Não há fundamento objetivo para revisão da taxa pelo critério do REsp 1.061.530/RS. Investigar vícios acessórios (TAC, TEC, seguro embutido, anatocismo) pode ser mais produtivo.`
+      detalhe: `A taxa contratada é <strong>${fmt(multipMensal)}× a média mensal</strong> e <strong>${fmt(multipAnual)}× a média anual</strong> do BACEN. Está acima da média mas nenhum dos múltiplos ultrapassa o gatilho de 1,5× do STJ. Tese revisional possível, porém com chance reduzida — exigirá prova concreta sobre o perfil de risco e custo de captação do banco (REsp 2.009.614/SC).`
     };
   }
+
+  return {
+    classe: 'regular',
+    titulo: 'Dentro do parâmetro',
+    eyebrow: 'Veredicto · em linha com o mercado',
+    detalhe: `A taxa contratada é <strong>${fmt(multipMensal)}× a média mensal</strong> e <strong>${fmt(multipAnual)}× a média anual</strong> do BACEN — dentro da faixa que o STJ considera não abusiva em ambas as escalas. Não há fundamento objetivo para revisão da taxa pelo critério do REsp 1.061.530/RS. Investigar vícios acessórios (TAC, TEC, seguro embutido, anatocismo) pode ser mais produtivo.`
+  };
 }
 
 // ============ RENDER RESULTADO ============
 function renderResultado(d) {
-  const diag = diagnostico(d.multiplo);
+  const diag = diagnostico(d.multiplo, d.multiploAnual);
+
+  // Texto dinâmico da nota sobre a fonte da taxa anual BACEN
+  const notaFonte = d.fonteAnualBacen === 'oficial'
+    ? `A taxa anual do BACEN (<strong>${fmtPct(d.taxaBacenAnual)} a.a.</strong>) é o dado oficial da série SGS 20749, publicada independentemente pelo Banco Central. A derivada matemática da mensal seria ${fmtPct(d.taxaBacenAnualDerivada)} a.a. — divergência de ${d.deltaAnualBacen.toFixed(2).replace('.', ',')} p.p., dentro do esperado por diferenças de arredondamento e metodologia de apuração do BACEN.`
+    : `A taxa anual do BACEN (<strong>${fmtPct(d.taxaBacenAnual)} a.a.</strong>) foi <strong>derivada matematicamente</strong> da taxa mensal por capitalização composta — a série oficial 20749 estava indisponível no momento da consulta. Para máxima robustez jurídica, verifique manualmente em <a href="https://www3.bcb.gov.br/sgspub/" target="_blank">www3.bcb.gov.br/sgspub</a>.`;
+
   const fillContratada = Math.min(100, (d.taxaEfetiva / (d.taxaBacen * 2.5)) * 100);
   const fillMedia = Math.min(100, (d.taxaBacen / (d.taxaBacen * 2.5)) * 100);
   const fillLimite = Math.min(100, ((d.taxaBacen * 1.5) / (d.taxaBacen * 2.5)) * 100);
@@ -1086,16 +1249,33 @@ function renderResultado(d) {
       <div class="verdict-stats">
         <div>
           <div class="stat-label">Taxa contratada</div>
-          <div class="stat-value">${fmtPct(d.taxaEfetiva)} <span class="small">a.m.</span></div>
+          <div class="stat-value">
+            ${fmtPct(d.taxaEfetiva)} <span class="small">a.m.</span>
+            <div class="anual">${fmtPct(d.taxaEfetivaAnual)} a.a.</div>
+          </div>
         </div>
         <div>
           <div class="stat-label">Taxa BACEN</div>
-          <div class="stat-value">${fmtPct(d.taxaBacen)} <span class="small">a.m.</span></div>
+          <div class="stat-value">
+            ${fmtPct(d.taxaBacen)} <span class="small">a.m.</span>
+            <div class="anual">${fmtPct(d.taxaBacenAnual)} a.a.</div>
+          </div>
         </div>
         <div>
-          <div class="stat-label">Múltiplo da média</div>
-          <div class="stat-value">${d.multiplo.toFixed(2).replace('.',',')}<span class="small">×</span></div>
+          <div class="stat-label">Múltiplo (a.m.)</div>
+          <div class="stat-value principal">${d.multiplo.toFixed(2).replace('.',',')}<span class="small">×</span></div>
         </div>
+        <div>
+          <div class="stat-label">Múltiplo (a.a.)</div>
+          <div class="stat-value principal">${d.multiploAnual.toFixed(2).replace('.',',')}<span class="small">×</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nota-multiplos">
+      <span class="nota-icon">i</span>
+      <div>
+        <strong>Por que dois múltiplos?</strong> O múltiplo mensal compara as taxas mensais diretamente (<code>${fmtPct(d.taxaEfetiva)} ÷ ${fmtPct(d.taxaBacen)}</code>). O múltiplo anual compara as taxas equivalentes anuais (<code>${fmtPct(d.taxaEfetivaAnual)} ÷ ${fmtPct(d.taxaBacenAnual)}</code>). A capitalização ao longo de 12 meses amplifica a diferença, então o múltiplo anual tende a ser maior. Em <strong>casos limítrofes</strong>, fundamentar a tese sobre a taxa anual pode ser estrategicamente mais favorável ao consumidor — o STJ não fixou em qual escala calcular o múltiplo de 1,5×. ${notaFonte}
       </div>
     </div>
 
@@ -1136,7 +1316,7 @@ function renderResultado(d) {
         <div class="card-eyebrow">Como está hoje</div>
         <h3>Contrato atual</h3>
         <div class="data-row"><span class="lbl">Valor financiado</span><span class="val">R$ ${fmtBRL(d.pv)}</span></div>
-        <div class="data-row"><span class="lbl">Taxa de juros</span><span class="val atual">${fmtPct(d.taxaEfetiva)} a.m.</span></div>
+        <div class="data-row"><span class="lbl">Taxa de juros</span><span class="val atual">${fmtPct(d.taxaEfetiva)} a.m.<span class="anual">${fmtPct(d.taxaEfetivaAnual)} a.a.</span></span></div>
         <div class="data-row"><span class="lbl">Valor da parcela</span><span class="val atual">R$ ${fmtBRL(d.pmt)}</span></div>
         <div class="data-row"><span class="lbl">Total de juros</span><span class="val atual">R$ ${fmtBRL(d.totalJurosAtual)}</span></div>
         <div class="data-row"><span class="lbl">Total a pagar</span><span class="val atual">R$ ${fmtBRL(d.pmt * d.n)}</span></div>
@@ -1146,7 +1326,7 @@ function renderResultado(d) {
         <div class="card-eyebrow">Como deveria ser</div>
         <h3>Com taxa BACEN</h3>
         <div class="data-row"><span class="lbl">Valor financiado</span><span class="val">R$ ${fmtBRL(d.pv)}</span></div>
-        <div class="data-row"><span class="lbl">Taxa de juros</span><span class="val justo">${fmtPct(d.taxaBacen)} a.m.</span></div>
+        <div class="data-row"><span class="lbl">Taxa de juros</span><span class="val justo">${fmtPct(d.taxaBacen)} a.m.<span class="anual">${fmtPct(d.taxaBacenAnual)} a.a.</span></span></div>
         <div class="data-row"><span class="lbl">Valor da parcela</span><span class="val justo">R$ ${fmtBRL(d.pmtRev)}</span></div>
         <div class="data-row"><span class="lbl">Total de juros</span><span class="val justo">R$ ${fmtBRL(d.totalJurosRev)}</span></div>
         <div class="data-row"><span class="lbl">Total a pagar</span><span class="val justo">R$ ${fmtBRL(d.pmtRev * d.n)}</span></div>
@@ -1190,13 +1370,14 @@ ${diag.titulo.toUpperCase()}
 
 CONTRATO ATUAL:
 - Valor financiado: R$ ${fmtBRL(d.pv)}
-- Taxa de juros efetiva: ${fmtPct(d.taxaEfetiva)} a.m.
+- Taxa de juros efetiva: ${fmtPct(d.taxaEfetiva)} a.m. (${fmtPct(d.taxaEfetivaAnual)} a.a.)
 - Parcela: R$ ${fmtBRL(d.pmt)}
 - ${d.n} parcelas = R$ ${fmtBRL(d.pmt * d.n)}
 
 TAXA BACEN (REFERÊNCIA):
-- Taxa média do mercado: ${fmtPct(d.taxaBacen)} a.m.
-- Múltiplo: ${d.multiplo.toFixed(4).replace('.',',')}× a média
+- Taxa média do mercado: ${fmtPct(d.taxaBacen)} a.m. · ${fmtPct(d.taxaBacenAnual)} a.a. ${d.fonteAnualBacen === 'oficial' ? '(série SGS 20749 — oficial BACEN)' : '(derivada da mensal — série 20749 indisponível)'}
+- Múltiplo (escala mensal): ${d.multiplo.toFixed(4).replace('.',',')}× a média
+- Múltiplo (escala anual):  ${d.multiploAnual.toFixed(4).replace('.',',')}× a média
 - Parâmetro STJ (Tema 27): 1,5× a média
 
 CENÁRIO REVISADO (com taxa BACEN):
@@ -1208,7 +1389,7 @@ DIFERENÇA / COBRANÇA INDEVIDA:
 - Total em ${d.n} parcelas: R$ ${fmtBRL((d.pmt - d.pmtRev) * d.n)}
 - Devolução em dobro (CDC): R$ ${fmtBRL((d.pmt - d.pmtRev) * d.n * 2)}
 
-Fonte BACEN: série SGS nº 25471
+Fontes BACEN: séries SGS nº 25471 (mensal) e 20749 (anual)
 Critério: REsp 1.061.530/RS · Tema 27 STJ`;
     navigator.clipboard.writeText(resumo).then(() => {
       const btn = document.getElementById('btn-copiar-resumo');
@@ -1247,9 +1428,14 @@ $('btn-calcular').addEventListener('click', async () => {
   // Busca taxa BACEN se não preenchida
   let taxaBacen = taxaBacenInput;
   if (isNaN(taxaBacen) || taxaBacen <= 0) {
-    const res = await buscarTaxaBacen(dataContrato);
-    if (res) taxaBacen = res;
-    else {
+    const resultado = await buscarTaxaBacen(dataContrato);
+    if (resultado) {
+      taxaBacen = resultado.mensal;
+      window._bacenAnualOficial  = resultado.anual;
+      window._bacenAnualDerivada = resultado.anualDerivada;
+      window._bacenFonteAnual    = resultado.fonteAnual;
+      window._bacenDeltaAnual    = resultado.deltaAnual;
+    } else {
       showModal('Taxa BACEN necessária', '<p>Não foi possível obter automaticamente a taxa BACEN. Por favor, preencha manualmente o campo "Taxa BACEN" — você pode obtê-la em <a href="https://www3.bcb.gov.br/sgspub/consultarvalores/consultarValoresSeries.do?method=consultarGraficoPorId&hdOidSeriesSelecionadas=25471" target="_blank">SGS · BACEN, série 25471</a>.</p><p style="margin-top:12px;">Procure pelo mês/ano da data do contrato e digite o valor (em % a.m.) no campo correspondente.</p>');
       return;
     }
@@ -1261,6 +1447,27 @@ $('btn-calcular').addEventListener('click', async () => {
   const taxaEfetiva = taxaEfetivaDec * 100;
   const multiplo = taxaEfetivaDec / taxaBacenDec;
 
+  // Taxa contratada anual: sempre derivada por capitalização composta
+  const taxaEfetivaAnualDec = taxaMensalParaAnual(taxaEfetivaDec);
+  const taxaEfetivaAnual    = taxaEfetivaAnualDec * 100;
+
+  // Taxa anual BACEN: preferir a oficial (série 20749), derivada como fallback.
+  // window._bacenAnualOficial é preenchido por buscarTaxaBacen().
+  // Variáveis window._bacen* são temporárias — padrão aceitável no single-file.
+  const taxaBacenAnualOficialDisp = window._bacenAnualOficial && !isNaN(window._bacenAnualOficial);
+  const taxaBacenAnualDec = taxaBacenAnualOficialDisp
+    ? window._bacenAnualOficial / 100
+    : taxaMensalParaAnual(taxaBacenDec);
+  const taxaBacenAnual         = taxaBacenAnualDec * 100;
+  const taxaBacenAnualDerivada = taxaMensalParaAnual(taxaBacenDec) * 100;
+  const fonteAnualBacen = taxaBacenAnualOficialDisp
+    ? (window._bacenFonteAnual || 'oficial')
+    : 'derivada';
+  const deltaAnualBacen = Math.abs(taxaBacenAnual - taxaBacenAnualDerivada);
+
+  // Múltiplo anual: usa a taxa anual oficial (ou derivada como fallback)
+  const multiploAnual = taxaEfetivaAnualDec / taxaBacenAnualDec;
+
   // Tabela revisada (com taxa BACEN)
   const tabela = tabelaPrice(pv, taxaBacenDec, n);
   const pmtRev = tabela.pmt;
@@ -1271,6 +1478,8 @@ $('btn-calcular').addEventListener('click', async () => {
   renderResultado({
     pv, pmt, n,
     taxaEfetiva, taxaBacen, multiplo,
+    taxaEfetivaAnual, taxaBacenAnual, multiploAnual,
+    taxaBacenAnualDerivada, deltaAnualBacen, fonteAnualBacen,
     pmtRev,
     totalJurosAtual,
     totalJurosRev: tabela.totalJuros,
@@ -1289,6 +1498,11 @@ $('btn-limpar').addEventListener('click', () => {
   $('data-contrato').value = '';
   $('bacen-status').className = 'bacen-status';
   $('bacen-status').textContent = '';
+  // Limpa os globals da taxa anual BACEN
+  window._bacenAnualOficial  = undefined;
+  window._bacenAnualDerivada = undefined;
+  window._bacenFonteAnual    = undefined;
+  window._bacenDeltaAnual    = undefined;
   document.querySelectorAll('.help-tip').forEach(t => t.classList.remove('show'));
   $('result-area').innerHTML = `
     <div class="empty-state">
@@ -1306,8 +1520,14 @@ $('btn-exemplo').addEventListener('click', () => {
   $('pmt').value = '2.033,69';
   $('n').value = '24';
   $('taxa-bacen').value = '1,97';
+  // Valores oficiais de 01/12/2025 — verificados nas séries 25471 e 20749 do BACEN
+  // 26,44% é o dado da série 20749 (anual oficial); 26,38% é a derivada matemática
+  window._bacenAnualOficial  = 26.44;
+  window._bacenAnualDerivada = 26.38;
+  window._bacenFonteAnual    = 'oficial';
+  window._bacenDeltaAnual    = 0.06;
   $('bacen-status').className = 'bacen-status success';
-  $('bacen-status').innerHTML = '✓ Exemplo: BACEN 01/12/2025 = <strong>1,97% a.m.</strong>';
+  $('bacen-status').innerHTML = '✓ Exemplo: BACEN 01/12/2025 = <strong>1,97% a.m. · 26,44% a.a. (oficial)</strong>';
 });
 
 </script>

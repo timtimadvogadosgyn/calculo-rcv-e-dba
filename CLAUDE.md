@@ -153,6 +153,55 @@ multiplo ≤ 1.2   → REGULAR (em linha com o mercado)
 
 Esses thresholds vêm do **REsp 1.061.530/RS (Tema 27 do STJ)**. Se mudar, atualize o disclaimer no rodapé e o `CLAUDE.md`.
 
+### Taxas mensal vs anual — fontes e convenção
+
+A calculadora busca **ambas as séries oficiais do BACEN em paralelo**:
+
+| Série | Escala | Uso |
+|---|---|---|
+| SGS 25471 | % a.m. (mensal) | Base do cálculo mensal e Newton-Raphson |
+| SGS 20749 | % a.a. (anual) | Base do múltiplo anual e comparação jurídica anual |
+
+**Descoberta relevante:** as duas séries podem diferir ligeiramente (em 12/2025: mensal 1,97% → derivada 26,38% a.a. vs oficial 20749: 26,44% a.a. — delta de 0,06 p.p.). Isso ocorre por diferenças metodológicas de apuração e arredondamento. O BACEN apura cada série independentemente, não deriva uma da outra.
+
+**Estratégia de fallback:** se a série anual (20749) falhar na API:
+1. Usa a derivada matemática: `(1 + i_mensal)^12 - 1`
+2. Indica claramente na UI que é derivada, não oficial
+3. Orienta o usuário a verificar manualmente
+
+**Implicação jurídica:** em contestação, o banco pode questionar se a taxa anual BACEN usada é a oficial. Usando a série 20749, a resposta é: sim, dado oficial publicado pelo BCB.
+
+**Verificação cruzada:** a calculadora sempre calcula a derivada e exibe o delta em relação à oficial na nota explicativa do resultado.
+
+**Não pedir taxa anual ao usuário.** Buscar da série 20749. Fallback: derivar da mensal.
+
+A calculadora também apresenta **dois múltiplos distintos**:
+
+```javascript
+// Helper de conversão (capitalização composta)
+function taxaMensalParaAnual(im) {
+  return Math.pow(1 + im, 12) - 1;
+}
+
+// Múltiplo mensal (compara taxas mensais)
+multiploMensal = taxa_mensal_contrato / taxa_mensal_bacen
+
+// Múltiplo anual (compara taxas anuais derivadas)
+multiploAnual = ((1+i_m_contrato)^12 - 1) / ((1+i_m_bacen)^12 - 1)
+```
+
+**Importante — equívoco comum:** os dois múltiplos NÃO são iguais. A capitalização composta amplifica a diferença ao longo de 12 meses, então `multiploAnual > multiploMensal` sempre que ambas as taxas forem positivas. No caso Daycoval: 1,63× (mensal) vs 1,75× (anual).
+
+**Implicação jurídica:** o STJ não fixou em qual escala calcular o múltiplo de 1,5× do Tema 27. A calculadora apresenta os dois para flexibilidade estratégica:
+- Se ambos > 1,5 → caso forte de abusividade
+- Se apenas o anual > 1,5 → tese viável construindo fundamentação na taxa anual (caso "limítrofe")
+- Se nenhum > 1,5 mas algum > 1,2 → zona cinzenta
+- Se nenhum > 1,2 → dentro do parâmetro
+
+A função `diagnostico(multipMensal, multipAnual)` recebe ambos e classifica conforme as 4 hipóteses acima.
+
+**Não pedir taxa anual ao usuário.** Sempre derivar matematicamente da mensal calculada por Newton-Raphson. Se em uma futura iteração houver necessidade de comparar a taxa anual *declarada* no contrato com a *derivada*, isso vira uma feature separada (verificação de capitalização não pactuada — Súmulas 539/541).
+
 ### Códigos das séries BACEN (mapa para expansão)
 
 | Modalidade | Código SGS | Frequência | Descrição |
@@ -285,6 +334,8 @@ Para testes rápidos no GitHub Pages, basta dar push — em 1 minuto está no ar
 - **2026-04-29 · Stack vanilla** — Decidimos não usar framework para manter o projeto editável por não-desenvolvedor.
 - **2026-04-29 · Single-file por enquanto** — CSS e JS embutidos em cada HTML. Refatorar quando houver 2+ calculadoras.
 - **2026-04-29 · API BACEN em tempo real** — Não embutimos histórico de taxas. Sempre consulta a fonte oficial.
+- **2026-04-30 · Taxa anual buscada da série oficial 20749** — A taxa anual do BACEN passou a ser buscada diretamente da série SGS 20749 (anual oficial) em paralelo com a 25471 (mensal), com fallback automático para a derivada matemática se a série anual estiver indisponível. Motivação: a derivada matemática da mensal diverge ~0,06 p.p. da oficial em 12/2025 (26,38% vs 26,44%). Em casos limítrofes essa diferença pode mudar o veredicto. Uso da série oficial aumenta robustez jurídica perante contestação do banco.
+- **2026-04-30 · Múltiplos mensal e anual lado a lado** — A calculadora exibe ambos os múltiplos (taxa mensal contra média mensal BACEN, e taxa anual derivada contra média anual derivada). Decisão tomada após validação numérica que mostrou que os múltiplos são matematicamente diferentes (a capitalização composta amplifica a diferença). A jurisprudência do STJ não fixou escala obrigatória, então mostrar ambos abre flexibilidade estratégica em casos limítrofes.
 
 ---
 
